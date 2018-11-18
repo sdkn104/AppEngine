@@ -1,0 +1,8 @@
+
+# to test, ie, to invoke local webservice and view in local web browser
+gcloud app browse
+
+# deploy
+-write requirements.txt for python package required
+gcloud app deploy app.yaml
+

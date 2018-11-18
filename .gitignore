@@ -1,0 +1,8 @@
+# git ignore
+
+__pycache__/
+credentials/
+private.py
+github.txt*
+
+

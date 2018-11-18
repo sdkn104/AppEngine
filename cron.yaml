@@ -1,0 +1,7 @@
+cron:
+- description: "send Jam Info"
+  url: /sendJamInfo
+  schedule: every 20 minutes
+- description: "check Alive"
+  url: /checkAlive
+  schedule: every 60 minutes
