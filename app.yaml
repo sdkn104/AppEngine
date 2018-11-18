@@ -1,3 +1,14 @@
 runtime: python37
 
+handlers:
+- url: /sendJamInfo
+  script: auto
+  login: admin  # only by admin (cron, etc)
+
+- url: /checkAlive
+  script: auto
+  login: admin  # only by admin (cron, etc)
+
+# url not defined here is handled in default manner (script=main.py, etc)
+
 

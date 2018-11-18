@@ -15,14 +15,17 @@ app = Flask(__name__)
 
 @app.route("/")
 @app.route("/"+private.project_app)
+@app.route("/"+private.project_app+"/")
 def hello():
     return 'Hello World! This page is created by AppEngine.'
 
+@app.route("/sendJamInfo")
 @app.route("/"+private.project_app+"/sendJamInfo")
 def sendJamInfo():
     sendJamInfoToBigQuery.send()
     return 'done'
 
+@app.route("/checkAlive")
 @app.route("/"+private.project_app+"/checkAlive")
 def doCheckAlive():
     s = checkAlive.checkAlive()
