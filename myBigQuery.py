@@ -4,8 +4,10 @@
 # upload data to bigquery
 #
 
-from google.cloud import bigquery
 import os
+import io
+import csv
+from google.cloud import bigquery  # require abount 50MB memory
 
 bqJsonPath = ["/home/sdkn104/system/etc/BigQueryKey.json","/home/sadakane/system/etc/BigQueryKey.json","credentials/BigQueryKey.json"]
 for json in bqJsonPath:
@@ -34,7 +36,43 @@ def triggerBigQuery(table, values):
     print("Exception occur!!\n"+m)
     raise
 
+# records = [ [r1c2, r1c2, r1c3]], [..], ]
+# records = { colname:[val1,val2, ..], ..}
+# records = { colname:{ rowname:val1,rowname:val2, ..}, ..}
+def loadBigQuery(table, records):
+    client = bigquery.Client()
+    dataset_id = 'HOME_IoT'  # replace with your dataset ID
+    table_id = table         # replace with your table ID
+    dataset_ref = client.dataset(dataset_id)
+    table_ref = dataset_ref.table(table_id)
+    table = client.get_table(table_ref)  # API request
 
-#if __name__ == "__main__":
-#    triggerBigQuery(table, [value1, value2, value3, value4])
+    # convert to CSV
+    with io.StringIO("", newline='') as csv_io:
+        csvWriter = csv.writer(csv_io, quoting=csv.QUOTE_MINIMAL)
+                      # csv.QUOTE_MINIMAL, csv.QUOTE_NONNUMERIC, csv.QUOTE_ALL, csv.QUOTE_NONE
+        #print(records)
+        csvWriter.writerows(records)
+        csv_str = csv_io.getvalue()
+    #print(csv_str)
 
+    # Load Job
+    csv_bin = csv_str.encode('utf8') 
+    csv_bio = io.BytesIO(csv_bin)
+    job_config = bigquery.LoadJobConfig()
+    job_config.source_format = 'CSV'
+    job_config.skip_leading_rows = 0
+    job_config.autodetect = False
+    job_config.allow_quoted_newlines = True
+    job_config.allow_jagged_rows = True  # allow missing columns in csv
+    job_config.ignore_unknown_values = True # Ignore extra values not represented in the table schema
+    job = client.load_table_from_file(file_obj=csv_bio, destination=table_ref, job_config=job_config)
+    job.result()  # Waits for table load to complete.
+    csv_bio.close()
+    assert job.state == 'DONE'
+
+if __name__ == "__main__":
+    #triggerBigQuery(table, [value1, value2, value3, value4])
+    import datetime
+    loadBigQuery("test_csv", [[datetime.datetime.now(),"b"],[55,3.4]])
+    print("done")

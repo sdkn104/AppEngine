@@ -3,6 +3,7 @@ from flask import Flask, request
 
 import myGmail
 import myBigQuery
+#import myStock
 import checkAlive
 import sendJamInfoToBigQuery
 
@@ -50,6 +51,17 @@ def gmail():
         addr_to = "sdkn104@yahoo.co.jp"
     myGmail.sendGmail("sdkn104home@gmail.com", addr_to, subject, body)
     return 'done sending gmail '+subject+" to "+addr_to
+
+@app.route("/sendStock")
+@app.route("/"+private.project_app+"/sendStock")
+def sendStock():
+    names_jp = ["1330", "9984", "1699", "6753"]
+    names_bloom = ["USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
+                   "VWO:US", "IYR:US", "IVV:US", "VNM:US",
+                   "2836:HK"]
+    #myStock.insertBQ(names_jp, names_bloom)
+    return 'done'
+
 
 @app.route("/"+private.project_app+"/gmail_test")
 def gmail_test():
