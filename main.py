@@ -3,10 +3,9 @@ from flask import Flask, request
 
 import myGmail
 import myBigQuery
-#import myStock
+import myStock
 import checkAlive
 import sendJamInfoToBigQuery
-
 import private
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -59,7 +58,7 @@ def sendStock():
     names_bloom = ["USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
                    "VWO:US", "IYR:US", "IVV:US", "VNM:US",
                    "2836:HK"]
-    #myStock.insertBQ(names_jp, names_bloom)
+    myStock.sendToBQ(names_jp, names_bloom, "stock_rcv")
     return 'done'
 
 

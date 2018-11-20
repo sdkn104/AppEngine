@@ -7,7 +7,7 @@ cron:
   url: /checkAlive
   schedule: every 60 minutes
 
-#- description: "send stock price data"
-#  url: /sendStock
-#  schedule: every day 23:00
+- description: "send stock price data"
+  url: /sendStock
+  schedule: every day 23:00
 
