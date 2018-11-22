@@ -1,9 +1,6 @@
 #!/usr/bin/python3  
 # coding: utf-8
 
-#import requests
-#from bs4 import BeautifulSoup
-#import re
 import urllib.parse
 import datetime
 from google.cloud import bigquery
@@ -57,18 +54,19 @@ def sendAlertMail(devName, lastTime):
                 "Not Alive, "+devName, "Not Alive "+devName+"\nnow:  "+str(getNowJST())+"\nlast: "+lastTime)
 
 
-def triggerIFTTT(event, value1, value2, value3):
-    key = "uoVHdqccPNfLG8UbUR6Al"
-    url = "http://maker.ifttt.com/trigger/"+urllib.parse.quote(event)+"/with/key/"+key + \
-          "?value1="+urllib.parse.quote(value1)+"&value2="+urllib.parse.quote(value2)+ \
-          "&value3="+urllib.parse.quote(value3)  #+" HTTP/1.1\r\n"
-    #print(url)
-    res = urllib.request.urlopen(url)
-    status = res.getcode()
-    #print(status)
-    #print(res.read())
+#def triggerIFTTT(event, value1, value2, value3):
+#    key = "uoVHdqccPNfLG8UbUR6Al"
+#    url = "http://maker.ifttt.com/trigger/"+urllib.parse.quote(event)+"/with/key/"+key + \
+#          "?value1="+urllib.parse.quote(value1)+"&value2="+urllib.parse.quote(value2)+ \
+#          "&value3="+urllib.parse.quote(value3)  #+" HTTP/1.1\r\n"
+#    #print(url)
+#    res = urllib.request.urlopen(url)
+#    status = res.getcode()
+#    #print(status)
+#    #print(res.read())
 
-
+#from memory_profiler import profile
+#@profile
 def checkAlive():
     s = ""
     s += checkAliveFor("basic", 3600, "%Y-%m-%d %H:%M:%S JST", 

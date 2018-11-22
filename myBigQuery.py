@@ -57,8 +57,6 @@ def loadBigQuery(table, records):
     #print(csv_str)
 
     # Load Job
-    csv_bin = csv_str.encode('utf8') 
-    csv_bio = io.BytesIO(csv_bin)
     job_config = bigquery.LoadJobConfig()
     job_config.source_format = 'CSV'
     job_config.skip_leading_rows = 0
@@ -66,9 +64,10 @@ def loadBigQuery(table, records):
     job_config.allow_quoted_newlines = True
     job_config.allow_jagged_rows = True  # allow missing columns in csv
     job_config.ignore_unknown_values = True # Ignore extra values not represented in the table schema
-    job = client.load_table_from_file(file_obj=csv_bio, destination=table_ref, job_config=job_config)
+    csv_bin = csv_str.encode('utf8') 
+    with io.BytesIO(csv_bin) as csv_bio:
+        job = client.load_table_from_file(file_obj=csv_bio, destination=table_ref, job_config=job_config)
     job.result()  # Waits for table load to complete.
-    csv_bio.close()
     assert job.state == 'DONE'
 
 if __name__ == "__main__":

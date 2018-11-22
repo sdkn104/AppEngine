@@ -64,9 +64,9 @@ def getDataJP(names, start, end):
     for name in names:
         url = "http://finance-web.info/download_historical/" + name
         r = requests.get(url)
-        csv_io = io.StringIO(r.content.decode('shift-jis'), newline='')
-        csvReader = csv.reader(csv_io)
-        mat = [row for row in csvReader]
+        with io.StringIO(r.content.decode('shift-jis'), newline='') as csv_io:
+            csvReader = csv.reader(csv_io)
+            mat = [row for row in csvReader]
         del mat[0]  # delete header
         # ["date", "y", "m", "d", "open", "high", "low", "close", "volume"]
         for row in mat:

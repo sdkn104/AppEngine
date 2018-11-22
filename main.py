@@ -39,6 +39,8 @@ def insertBQ():
     value3 = request.args.get('value3', '')
     value4 = request.args.get('value4', '')
     myBigQuery.triggerBigQuery(table, [[value1, value2, value3, value4]])
+    import gc
+    gc.collect()
     return 'done inserting to '+table+", ("+value1+", "+value2+", "+value3+", "+value4+")"
 
 @app.route("/"+private.project_app+"/gmail")
