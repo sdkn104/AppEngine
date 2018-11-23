@@ -7,5 +7,6 @@ gcloud app browse
 gcloud app deploy app.yaml
 
 # start stand alone (not app engine)
-sudo python3 main.py >& /dev/null &
+pip3 install -r requirements_server.txt
+sudo python3 main_server.py >& /dev/null &
 

@@ -86,6 +86,7 @@ if __name__ == '__main__':
     for d in dirs:
        if os.path.exists(d):
           logdir = d
+          break
     print("set logdir to " + d)
     logging.basicConfig(filename=logdir+'flask.log',level=logging.INFO)
     #app.run(host='127.0.0.1', port=8080, debug=True)
