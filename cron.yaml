@@ -7,6 +7,10 @@ cron:
   url: /checkAlive
   schedule: every 60 minutes from 0:19 to 23:59
 
+- description: "check Alive of Web server on GCE"
+  url: /checkAliveOfWebOnGCE
+  schedule: every day 05:03
+
 - description: "send stock price data"
   url: /sendStock
   schedule: every day 23:03
