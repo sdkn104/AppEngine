@@ -6,3 +6,6 @@ gcloud app browse
 -write requirements.txt for python package required
 gcloud app deploy app.yaml
 
+# start stand alone (not app engine)
+sudo python3 main.py >& /dev/null &
+
