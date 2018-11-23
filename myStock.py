@@ -100,8 +100,7 @@ def sendToBQ(names_jp, names_bloom, table):
         #print("traceback:\n"+tb)
         print("error (%s) caught. sending Mail." % type(e))
         msg = "Failed to send stock info to BigQuery by myStock.sendToBQ().\ntrace:\n"+tb
-        myGmail.sendGmail("sdkn104home@gmail.com", "sdkn104@gmail.com;sdkn104@yahoo.co.jp", 
-                          "ERROR on myStock", msg)
+        myGmail.sendAlertMail("ERROR on myStock", msg)
         raise
 
 

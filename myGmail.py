@@ -96,6 +96,9 @@ def sendGmail(sender, to, subject, message_text):
                     "trace:\n"+tb)
        raise
 
+def sendAlertMail(subject, message_text):
+    sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp;sdkn104@gmail.com", subject, message_text)
+
 def test():
     msg = sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp;sdkn104@gmail.com", "test", "this is test")
     if msg == None:

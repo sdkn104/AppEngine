@@ -50,7 +50,7 @@ def getNowJST():
 
 def sendAlertMail(devName, lastTime):
     #triggerIFTTT("NotAlive", devName, str(getNowJST()), lastTime)
-    msg = myGmail.sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp", \
+    msg = myGmail.sendAlertMail( \
                 "Not Alive, "+devName, "Not Alive "+devName+"\nnow:  "+str(getNowJST())+"\nlast: "+lastTime)
 
 
