@@ -13,6 +13,8 @@ import csv
 #  return 1
 #test()
 
+# names = ['GPL','AAPL']
+# end = datetime.datetime.now()
 def getDataIEX(names, start, end):
   # list: https://api.iextrading.com/1.0/ref-data/symbols
   import pandas as pd  # require about 60MB memory
@@ -28,6 +30,7 @@ def getDataIEX(names, start, end):
   dfall = dfall.reset_index().ix[:,["date","name","open","high","low","close","volume"]]
   return dfall.values
 
+# end = datetime.datetime.now()
 def getDataFX(start, end):
   import pandas as pd  # require about 60MB memory
   import pandas_datareader.data as web
@@ -84,13 +87,12 @@ def sendToBQ(names_jp, names_bloom, table):
     try:
         #end = datetime.datetime(2018, 11, 14)
         end = datetime.datetime.now()
-        start = end - datetime.timedelta(days=7)
-        #names = ['GPL','AAPL']
-        #mat3 = getDataIEX(names, start, end)
-        #mat4 = getDataFX(start,end)
+        start = end - datetime.timedelta(days=5)
         mat1 = getDataBloomberg(names_bloom)
         mat2 = getDataJP(names_jp, start, end)
         mat = mat1 + mat2
+        for m in mat:
+          m[1] = re.sub(r'^(\d\d\d\d:HK)$', r'0\1', m[1])
         #print(mat)
         myBigQuery.loadBigQuery(table, mat)
     except Exception as e:
