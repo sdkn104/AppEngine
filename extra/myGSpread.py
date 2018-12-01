@@ -4,10 +4,12 @@ import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-credPath = ["/home/sdkn104/system/etc/GSpread.json","/home/sadakane/system/etc/GSpread.json","credentials/GSpread.json", "./GSpread.json"]
-for json in credPath:
-  if os.path.exists(json):
-    cred = json
+credPath = ["/home/sdkn104/system/etc","/home/sadakane/system/etc",
+    "C:/Users/sdkn1/AppData/Local/Google/Cloud SDK/appengine/service/credentials", 
+    "credentials", "."]
+for f in [p+"/BigQueryKey.json" for p in credPath]:
+  if os.path.exists(f):
+    cred = f
     print("set credential to " + cred)
     break
 
