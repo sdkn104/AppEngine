@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #
-# upload data to bigquery
+# access to bigquery
 #
 
 import os
@@ -9,13 +9,27 @@ import io
 import csv
 from google.cloud import bigquery  # require abount 50MB memory
 
-bqJsonPath = ["/home/sdkn104/system/etc/BigQueryKey.json","/home/sadakane/system/etc/BigQueryKey.json","credentials/BigQueryKey.json"]
-for json in bqJsonPath:
-  if os.path.exists(json):
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = json
-    print("set credential to " + json)
+credPath = ["/home/sdkn104/system/etc","/home/sadakane/system/etc",
+    "C:/Users/sdkn1/AppData/Local/Google/Cloud SDK/appengine/service/credentials", 
+    "credentials", "."]
+for f in [p+"/BigQueryKey.json" for p in credPath]:
+  if os.path.exists(f):
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = f
+    print("set credential to " + f)
+    break
 
 
+# query to BigQuery and return DataFrame
+def queryBigQuery(sql):
+    client = bigquery.Client()
+    query_job = client.query(sql)  # API request
+    rows = query_job.result()  # Waits for query to finish
+    #print(rows.schema)
+    df = rows.to_dataframe()
+    return df
+    
+
+# Upload data to BigQuery by streaming (fast but charged)
 # values = 2-dim array = [[value1, value2, ...], [value1, value2, ...], ... ]
 def triggerBigQuery(table, values):
   try:
@@ -36,6 +50,7 @@ def triggerBigQuery(table, values):
     print("Exception occur!!\n"+m)
     raise
 
+# Upload data to BigQuery by Job
 # records = [ [r1c2, r1c2, r1c3]], [..], ]
 # records = { colname:[val1,val2, ..], ..}
 # records = { colname:{ rowname:val1,rowname:val2, ..}, ..}
@@ -72,6 +87,8 @@ def loadBigQuery(table, records):
 
 if __name__ == "__main__":
     #triggerBigQuery(table, [value1, value2, value3, value4])
-    import datetime
-    loadBigQuery("test_csv", [[datetime.datetime.now(),"b"],[55,3.4]])
+    #import datetime
+    #loadBigQuery("test_csv", [[datetime.datetime.now(),"b"],[55,3.4]])
+    r = queryBigQuery("select *  FROM `proven-mystery-220011.HOME_IoT.test_csv`")    
+    print(r)
     print("done")
