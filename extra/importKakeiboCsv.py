@@ -2,6 +2,7 @@ import re
 import io
 import datetime
 import pprint
+import chardet
 
 import myBigQuery
 
@@ -41,12 +42,20 @@ def getDataCsv(csvfile, start, end):
                         "utiwake":row["utiwake"], 
                         "mark":row["mark"] if row["mark"] else ""}
 
+  accountName = {"楽天銀行":"イーバンク",
+                 "十六銀行":"十六銀行",
+                 "三菱UFJ銀行":"MUFG銀行",
+                 "三井住友銀行":"さくら総合",
+                 "ゆうちょ銀行":"郵便貯金普通"}
+
   ptn_rakuten = r"利用日,利用店名・商品名,利用者,支払方法,利用金額,支払手数料,支払総額"
   ptn_bankmeisai = r"取引日,名義,会社名,出金,入金,残高,摘要,備考,取引先支店名"
   ptn_bank = r"会社名,支店,口座種別,口座番号,残高"
 
   # read csv file
-  with open(csvfile, "r", encoding="shift_jis") as f:
+  with open(csvfile, "rb") as f:
+    enc = chardet.detect(f.read())["encoding"]
+  with open(csvfile, "r", encoding=enc) as f:
     lines = f.readlines()
   #print("".join(lines).replace('"',''))
   # check csv type
@@ -81,28 +90,33 @@ def getDataCsv(csvfile, start, end):
       biko = row["利用店名・商品名"]
       himoku = dic[biko]["himoku"] if biko in dic else ""
       utiwake = dic[biko]["utiwake"] if biko in dic else ""
-      income = 0 #row["支払総額"]
+      income = 0
       outgo = row["支払総額"]
       mark = dic[biko]["mark"] if biko in dic else ""
       account = "楽天カード"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
-  elif ptn == ptn_adsbi:
+  elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():
-      #print(row)
-      date = datefmt(row["入出金日"])
-      t = row["摘要"]
-      if not re.search(r"配当金",t):
-        continue
-      name = re.sub(r"^.*配当金\s+(.*)$","\\1", t)
-      account = "ETRADE"
-      if row["区分"] == "入金":
-        paid = tofloat(row["入金額"]) * -1
-      elif row["区分"] == "出金":
-        paid = tofloat(row["出金額"])
-      amount = 0
-      price = 0
-      comment = row["摘要"]
-      mat.append([date, name, account, paid, amount, price, comment])
+      date = datefmt(row["取引日"])
+      biko = row["摘要"]
+      himoku = dic[biko]["himoku"] if biko in dic else ""
+      utiwake = dic[biko]["utiwake"] if biko in dic else ""
+      income = row["入金"]
+      outgo = row["出金"]
+      mark = dic[biko]["mark"] if biko in dic else ""
+      account = accountName[row["会社名"]]
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif ptn == ptn_bank:
+    for index, row in df.iterrows():
+      date = re.sub(r"[^_]*_(\d\d\d\d)(\d\d)(\d\d).csv","\\1-\\2-\\3",csvfile)
+      biko = row["残高"]
+      himoku = "使途不明金"
+      utiwake = "残高合せ込み"
+      income = 0
+      outgo = 0
+      mark = ""
+      account = accountName[row["会社名"]]
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
 
   # filter by start, end dates
   #pprint.pprint(mat, width=200,depth=2)
@@ -115,7 +129,7 @@ if __name__ == "__main__":
   import sys
   file = sys.argv[1]
   start = datetime.datetime(1970,1,1)
-  end = datetime.datetime.today() - datetime.timedelta(days=2)
+  end = datetime.datetime.today() + datetime.timedelta(days=2)
   values = getDataCsv(file, start, end)
   pprint.pprint(values, width=200, depth=2)
   import myGSpread
