@@ -17,7 +17,7 @@ def tofloat(s):
 
 def datefmt(s):
   a = s.replace("/","-").split("-")
-  return "%s-%02d-%02d" % (a[0], int(a[1]), int(a[2]))
+  return "%s/%02d/%02d" % (a[0], int(a[1]), int(a[2]))
 
 # read CSV and retern list of lists
 def getDataCsv(csvfile, start, end):
@@ -25,15 +25,20 @@ def getDataCsv(csvfile, start, end):
 
   sql = """
       WITH
-      D as (
+      A as (
+        SELECT himoku, utiwake, REGEXP_REPLACE(biko,'[0-9]','') as biko, mark, account
+        FROM `proven-mystery-220011.HOME_IoT.kakeibo_data_newest`
+        where biko is not NULL AND account is not NULL AND account != '現金'
+      ),
+      B as (
         SELECT himoku, utiwake, biko, mark, 
           count(*) as cnt,  
           ROW_NUMBER() OVER (PARTITION BY biko ORDER BY count(*) desc) as num
-        FROM `proven-mystery-220011.HOME_IoT.kakeibo_data_newest`
+        FROM A
         where biko is not NULL AND account is not NULL AND account != '現金'
         group by himoku, utiwake, biko, mark
       )
-      select himoku, utiwake, biko, mark from D where num = 1
+      select himoku, utiwake, biko, mark from B where num = 1
     """
   df = myBigQuery.queryBigQuery(sql)
   dic = {}
@@ -98,17 +103,18 @@ def getDataCsv(csvfile, start, end):
   elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():
       date = datefmt(row["取引日"])
-      biko = row["摘要"]
-      himoku = dic[biko]["himoku"] if biko in dic else ""
-      utiwake = dic[biko]["utiwake"] if biko in dic else ""
+      biko = str(row["摘要"]) + str(row["備考"]).replace("nan","")
+      b = re.sub(r"[0-9]","",biko)
+      himoku = dic[b]["himoku"] if biko in dic else ""
+      utiwake = dic[b]["utiwake"] if biko in dic else ""
       income = row["入金"]
       outgo = row["出金"]
-      mark = dic[biko]["mark"] if biko in dic else ""
+      mark = dic[b]["mark"] if biko in dic else ""
       account = accountName[row["会社名"]]
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif ptn == ptn_bank:
     for index, row in df.iterrows():
-      date = re.sub(r"[^_]*_(\d\d\d\d)(\d\d)(\d\d).csv","\\1-\\2-\\3",csvfile)
+      date = re.sub(r"[^_]*_(\d\d\d\d)(\d\d)(\d\d).csv","\\1/\\2/\\3",csvfile)
       biko = row["残高"]
       himoku = "使途不明金"
       utiwake = "残高合せ込み"
@@ -120,8 +126,8 @@ def getDataCsv(csvfile, start, end):
 
   # filter by start, end dates
   #pprint.pprint(mat, width=200,depth=2)
-  s_start = start.strftime("%Y-%m-%d")
-  s_end = end.strftime("%Y-%m-%d")
+  s_start = start.strftime("%Y/%m/%d")
+  s_end = end.strftime("%Y/%m/%d")
   mat = [m for m in mat if m[2] >= s_start and m[2] <= s_end]
   return mat
 
