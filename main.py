@@ -32,6 +32,12 @@ def checkAliveOfWebOnGCE():
     myGmail.sendAlertMail("Alert Mail: error", "Error in checkAliveOfWebOnGCE() on AppEngine.")
     raise
 
+# receive Kakeibo HTML 
+@app.route("/"+private.project_app+"/kakeiboHtml", methods=['POST'])
+def kakeiboHtml():
+    data = request.form['body']
+    return make_response(data,[("Content-Type","text/plain")])
+    
 # transfer to other server
 @app.route('/<path:path>')
 def catch_all_private(path):
