@@ -36,7 +36,11 @@ def checkAliveOfWebOnGCE():
 @app.route("/"+private.project_app+"/kakeiboHtml", methods=['POST'])
 def kakeiboHtml():
     data = request.form['body']
-    return make_response(data,[("Content-Type","text/plain")])
+    import importKakeiboCsv
+    import myGSpread
+    values = importKakeiboCsv.getDataHtml(data)
+    myGSpread.appendRows(values,"家計簿", "検索")
+    return make_response(str(values),[("Content-Type","text/plain")])
     
 # transfer to other server
 @app.route('/<path:path>')
