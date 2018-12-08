@@ -40,7 +40,7 @@ def kakeiboHtml():
     import myGSpread
     values = importKakeiboCsv.getDataHtml(data)
     myGSpread.appendRows(values,"家計簿", "検索")
-    return make_response(str(values),[("Content-Type","text/plain")])
+    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
     
 # transfer to other server
 @app.route('/<path:path>')
