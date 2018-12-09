@@ -1,7 +1,9 @@
 import re
 import io
+import os
 import datetime
 import pprint
+import chardet
 
 #from memory_profiler import profile
 #@profile
@@ -10,14 +12,15 @@ import pprint
 #test()
 
 def tofloat(s):
-  return float(str(s).replace(",",""))
+  return float("0"+str(s).replace(",",""))
 
 def datefmt(s):
-  a = s.replace("/","-").split("-")
-  return "%s-%02d-%02d" % (a[0], int(a[1]), int(a[2]))
+  m = re.search(r'^\s*(\d+)[/-](\d+)[/-](\d+)',s)
+  y = m.group(1) if len(m.group(1))==4 else "20"+m.group(1)
+  return "%s-%02d-%02d" % (y, int(m.group(2)), int(m.group(3)))
 
 # read CSV and retern list of lists
-def getDataCsv(csvfile, start, end):
+def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime(2999,12,31)):
   import pandas as pd  # require about 60MB memory
   ptn_sbi = r"約定日,銘柄,銘柄コード,市場,"
   ptn_adsbi = r"入出金日,区分,摘要,出金額,入金額,振替出金額,振替入金額"
@@ -28,7 +31,8 @@ def getDataCsv(csvfile, start, end):
   # read csv file
   with open(csvfile, "r", encoding="shift_jis") as f:
     lines = f.readlines()
-  #print("".join(lines).replace('"',''))
+  print("".join(lines).replace('"',''))
+  print("read csv %d lines" % len(lines))
   # check csv type
   if re.search(ptn_sbi, "".join(lines).replace('"','')):
     print("SBI TRADE")
@@ -130,7 +134,6 @@ def getDataCsv(csvfile, start, end):
   elif ptn == ptn_adjp:
     for index, row in df.iterrows():
       #print(row)
-      print(row["取引区分"])
       if row["取引区分"] != "外株配当金":
         continue
       date = datefmt(row["約定日"])
@@ -168,13 +171,64 @@ def getDataCsv(csvfile, start, end):
   mat = [m for m in mat if m[0] >= s_start and m[0] <= s_end]
   return mat
 
+# read HTML file/text 
+def getDataHtml(html):
+  from bs4 import BeautifulSoup
+  # read file or string
+  if os.path.exists(html):
+    with open(html, "rb") as f:
+      enc = chardet.detect(f.read())["encoding"]
+    with open(html, "r", encoding=enc) as f:
+      html_str = f.read()
+  else:
+    html_str = html
+
+  soup = BeautifulSoup(html_str, "html.parser")
+  for t in soup.find_all("table"):
+    c = t.find_all("div",attrs={"class":["uforex1_class_bid_img","uforex1_class_ask_img"]})
+    if len(c) > 0:
+        tbl = t
+  rows = tbl.find_all("tr")
+
+  mat = []
+  for row in rows:
+      csvRow = []
+      for cell in row.select("td, th"):
+        if cell.find_all(attrs={"class":"uforex1_class_bid_img"}):
+          txt = "売"
+        elif cell.find_all(attrs={"class":"uforex1_class_ask_img"}):
+          txt = "買"
+        else:
+          txt = cell.get_text()
+        csvRow.append(txt)
+      print(csvRow)
+      if len(csvRow) == 13:
+        kubun = csvRow[3]
+        date = datefmt(csvRow[0]) if kubun == "決済約定" else datefmt(csvRow[6]) if kubun == "新規約定" else "err"
+        name = csvRow[2]
+        sign = 1 if csvRow[4]=="買" else -1 if csvRow[4]=="売" else 0
+        amount = tofloat(csvRow[5]) * sign
+        sinki_price = tofloat(csvRow[7])
+        kessai_price = tofloat(csvRow[8])
+        price = kessai_price if kubun == "決済約定" else sinki_price if kubun == "新規約定" else 0
+        tesuryo = tofloat(csvRow[9])
+        swap = tofloat(csvRow[10])
+        paid = price * amount + tesuryo + swap
+        account = "外為NEXT"
+        comment = "SWAP:"+str(swap)
+        mat.append([date, name, account, paid, amount, price, comment])
+  print("read %d rows" % len(rows))
+  return mat
+
 if __name__ == "__main__":
   import sys
   file = sys.argv[1]
-  start = datetime.datetime(1970,1,1)
-  end = datetime.datetime.today() - datetime.timedelta(days=2)
-  values = getDataCsv(file, start, end)
+  if re.search(r".(csv|CSV)$",file):
+    values = getDataCsv(file)
+  else:
+    values = getDataHtml(file)
   pprint.pprint(values, width=200, depth=2)
+  print("sending %d records..." % len(values))
   import myGSpread
   myGSpread.insertRows(values, "運用履歴", "data", 0)
   input("enter any key to exit")

@@ -42,6 +42,16 @@ def kakeiboHtml():
     myGSpread.appendRows(values,"家計簿", "検索")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
     
+# receive unyou HTML 
+@app.route("/"+private.project_app+"/unyouHtml", methods=['POST'])
+def unyouHtml():
+    data = request.form['body']
+    import importStockCsv
+    import myGSpread
+    values = importStockCsv.getDataHtml(data)
+    myGSpread.appendRows(values,"運用履歴", "data")
+    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+    
 # transfer to other server
 @app.route('/<path:path>')
 def catch_all_private(path):
