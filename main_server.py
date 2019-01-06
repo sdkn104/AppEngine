@@ -41,7 +41,7 @@ def insertBQ():
     value2 = request.args.get('value2', '')
     value3 = request.args.get('value3', '')
     value4 = request.args.get('value4', '')
-    myBigQuery.triggerBigQuery(table, [[value1, value2, value3, value4]])
+    myBigQuery.loadBigQuery(table, [[value1, value2, value3, value4]])
     import gc
     gc.collect()
     return 'done inserting to '+table+", ("+value1+", "+value2+", "+value3+", "+value4+")"
