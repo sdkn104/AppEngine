@@ -78,7 +78,7 @@ def getDataJP(names, start, end):
             row[0] = row[0][0:4] + "-" + row[0][4:6] + "-" + row[0][6:8] # create yyyy-mm-dd
             row[1] = name
         mat = [row for row in mat if (row[0]  >= start_str) and (row[0] <= end_str) ]
-        assert len(mat) > 0
+        #assert len(mat) > 0
         mat_all.extend(mat)
     return mat_all
 
