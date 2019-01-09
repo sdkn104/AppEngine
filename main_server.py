@@ -63,6 +63,7 @@ def sendStock():
     names_bloom = ["INDU:IND", "USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
                    "VWO:US", "IYR:US", "IVV:US", "VNM:US",
                    "2836:HK"]
+    names_bloom.extend([n+":JP" for n in names_jp])
     myStock.sendToBQ(names_jp, names_bloom, "stock_rcv")
     return 'done'
 

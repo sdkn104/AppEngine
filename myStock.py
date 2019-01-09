@@ -108,6 +108,6 @@ def sendToBQ(names_jp, names_bloom, table):
 
 if __name__ == "__main__":
     names_jp = ["1322","1323"]
-    names_bloom = ["2836:HK","USDJPY:CUR","AAPL:US"]
+    names_bloom = ["2836:HK","USDJPY:CUR","AAPL:US", "1322:JP"]
     sendToBQ(names_jp, names_bloom, "stock_rcv")
 
