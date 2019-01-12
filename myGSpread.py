@@ -42,7 +42,7 @@ def appendRows(values, spreadsheet, worksheet):
   gc = gspread.authorize(credentials)
 
   ss = gc.open(spreadsheet)
-  range_ = "'"+worksheet+"'"
+  range_ = "'"+worksheet+"'!A:A"  # append rows after the last table overlap with A:A
   value_input_option = 'RAW'
   insert_data_option = 'INSERT_ROWS'
   value_range_body = {
