@@ -19,7 +19,10 @@ def tofloat(s):
 
 def datefmt(s):
   a = s.replace("/","-").strip().split("-")
-  return "%s/%02d/%02d" % (a[0], int(a[1]), int(a[2]))
+  if len(a) == 3:
+    return "%s/%02d/%02d" % (a[0], int(a[1]), int(a[2]))
+  else:
+    return "%s/%02d/00" % (a[0], int(a[1]))
 
 # get All _KakeiboData from BiigQuery and make dict 
 def getHistDic():

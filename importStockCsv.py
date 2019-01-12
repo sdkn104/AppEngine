@@ -12,7 +12,7 @@ import chardet
 #test()
 
 def tofloat(s):
-  return float(re.sub(r"^[.]","0.",str(s)).replace(",",""))
+  return float(re.sub(r"^\s*$","0",str(s)).replace(",",""))
 
 def datefmt(s):
   m = re.search(r'^\s*(\d+)[/-](\d+)[/-](\d+)',s)
