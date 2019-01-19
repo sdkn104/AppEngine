@@ -54,7 +54,7 @@ def triggerBigQuery(table, values):
 # records = [ [r1c2, r1c2, r1c3]], [..], ]
 # records = { colname:[val1,val2, ..], ..}
 # records = { colname:{ rowname:val1,rowname:val2, ..}, ..}
-def loadBigQuery(table, records, async=False):
+def loadBigQuery(table, records, asyn=False):
     client = bigquery.Client()
     dataset_id = 'HOME_IoT'  # replace with your dataset ID
     table_id = table         # replace with your table ID
@@ -82,7 +82,7 @@ def loadBigQuery(table, records, async=False):
     csv_bin = csv_str.encode('utf8') 
     with io.BytesIO(csv_bin) as csv_bio:
         job = client.load_table_from_file(file_obj=csv_bio, destination=table_ref, job_config=job_config)
-    if not async:
+    if not asyn:
       job.result()  # Waits for table load to complete.
       assert job.state == 'DONE'
     #print(job.state)
