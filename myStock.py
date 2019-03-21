@@ -89,7 +89,10 @@ def sendToBQ(names_jp, names_bloom, table):
         end = datetime.datetime.now()
         start = end - datetime.timedelta(days=5)
         mat1 = getDataBloomberg(names_bloom)
-        mat2 = getDataJP(names_jp, start, end)
+        try:
+            mat2 = getDataJP(names_jp, start, end)
+        except:   
+            mat2 = []
         mat = mat1 + mat2
         for m in mat:
           m[1] = re.sub(r'^(\d\d\d\d:HK)$', r'0\1', m[1])
