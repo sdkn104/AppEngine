@@ -108,6 +108,8 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   if ptn == ptn_rakuten:
     for index, row in df.iterrows():
       #print(row)
+      if pd.isnull(row["利用日"]):
+        continue
       date = datefmt(row["利用日"])
       biko = row["利用店名・商品名"]
       himoku = dic[biko]["himoku"] if biko in dic else ""
