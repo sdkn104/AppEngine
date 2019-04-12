@@ -21,7 +21,7 @@ def datefmt(s):
   a = s.replace("/","-").strip().split("-")
   if len(a) == 3:
     return "%s/%02d/%02d" % (a[0], int(a[1]), int(a[2]))
-  else if len(a) == 2 :
+  elif len(a) == 2 :
     return "%s/%02d/00" % (a[0], int(a[1]))
   else:
     return "%s/00/00" % (a[0])
