@@ -184,14 +184,24 @@ def getDataHtml(html):
     html_str = html
 
   soup = BeautifulSoup(html_str, "html.parser")
+  tbl = None
+  type = ""
+  # gaitame
   for t in soup.find_all("table"):
     c = t.find_all("div",attrs={"class":["uforex1_class_bid_img","uforex1_class_ask_img"]})
     if len(c) > 0:
         tbl = t
+        type = "gaitame"
+  # click365
+  if tbl is None:
+    tbl = soup.find("table", id="executeList")
+    type = "click365"
+
   rows = tbl.find_all("tr")
 
   mat = []
-  for row in rows:
+  if type == "gaitame":
+    for row in rows:
       csvRow = []
       for cell in row.select("td, th"):
         if cell.find_all(attrs={"class":"uforex1_class_bid_img"}):
@@ -217,6 +227,26 @@ def getDataHtml(html):
         account = "外為NEXT"
         comment = "SWAP:"+str(swap)
         mat.append([date, name, account, paid, amount, price, comment])
+  else:
+    for row in rows:
+      csvRow = []
+      for cell in row.select("td, th"):
+        txt = cell.get_text()
+        csvRow.append(txt)
+      print(csvRow)
+      if len(csvRow) >= 10:
+        date = datefmt(csvRow[3])
+        name = csvRow[6].replace("\n","")
+        account = "クリック株365"
+        sign = 1 if "買" in csvRow[8] else -1 if "売" in csvRow[8] else 0
+        amount = tofloat(csvRow[10]) * sign
+        price = tofloat(csvRow[11])
+        kinri_haito = tofloat(csvRow[13])
+        tesuryo = tofloat(csvRow[14])
+        paid = price * amount + tesuryo + kinri_haito
+        comment = "金利/配当:"+str(kinri_haito)
+        mat.append([date, name, account, paid, amount, price, comment])
+
   print("read %d rows" % len(rows))
   return mat
 
