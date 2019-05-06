@@ -8,5 +8,5 @@ gcloud app deploy app.yaml
 
 # start stand alone (not app engine)
 pip3 install -r requirements_server.txt
-sudo python3 main_server.py >& /dev/null &
+sudo python3 main_server.py >& /dev/null &  # -> log file = flask.log
 
