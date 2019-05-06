@@ -13,19 +13,19 @@ automatic_scaling:
 handlers:
 - url: /sendJamInfo
   script: auto
-  login: admin  # only by admin (cron, etc)
+  #login: admin  # only by admin (cron, etc)
 
 - url: /checkAlive
   script: auto
-  login: admin  # only by admin (cron, etc)
+  #login: admin  # only by admin (cron, etc)
 
 - url: /checkAliveOfWebOnGCE
   script: auto
-  login: admin  # only by admin (cron, etc)
+  #login: admin  # only by admin (cron, etc)
 
 - url: /sendStock
   script: auto
-  login: admin  # only by admin (cron, etc)
+  #login: admin  # only by admin (cron, etc)
 
 
 # url not defined here is handled in default manner (script=main.py, etc)
