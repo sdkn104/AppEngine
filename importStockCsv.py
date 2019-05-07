@@ -217,7 +217,7 @@ def getDataHtml(html):
         date = datefmt(csvRow[0]) if kubun == "決済約定" else datefmt(csvRow[6]) if kubun == "新規約定" else "err"
         name = csvRow[2]
         sign = 1 if csvRow[4]=="買" else -1 if csvRow[4]=="売" else 0
-        amount = tofloat(csvRow[5]) * sign
+        amount = tofloat(csvRow[5]) * 1000 * sign 
         sinki_price = tofloat(csvRow[7])
         kessai_price = tofloat(csvRow[8])
         price = kessai_price if kubun == "決済約定" else sinki_price if kubun == "新規約定" else 0
