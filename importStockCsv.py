@@ -239,7 +239,7 @@ def getDataHtml(html):
         name = csvRow[6].replace("\n","")
         account = "クリック株365"
         sign = 1 if "買" in csvRow[8] else -1 if "売" in csvRow[8] else 0
-        amount = tofloat(csvRow[10]) * sign
+        amount = tofloat(csvRow[10]) * 100 * sign
         price = tofloat(csvRow[11])
         kinri_haito = tofloat(csvRow[13])
         tesuryo = tofloat(csvRow[14])
