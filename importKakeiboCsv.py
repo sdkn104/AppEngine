@@ -180,7 +180,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       if str(outgo) == "nan":
         continue
       mark = dic[b]["mark"] if biko1 in dic else ""
-      account = "Pone"
+      account = "P-one"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
 
   # filter by start, end dates
