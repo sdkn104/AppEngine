@@ -15,6 +15,8 @@ import myBigQuery
 #test()
 
 def tofloat(s):
+  if str(s) == "nan":
+    return 0
   return float(str(s).replace(",",""))
 
 def datefmt(s):
@@ -69,6 +71,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   ptn_bankmeisai = r"取引日,名義,会社名,出金,入金,残高,摘要,備考,取引先支店名"
   ptn_bank = r"会社名,支店,口座種別,口座番号,残高"
   ptn_jwest = r"ご利用者,カテゴリ,ご利用日,ご利用先など,ご利用金額\(￥\),支払区分,今回回数,訂正サイン,お支払い金額\(￥\),国内／海外"
+  ptn_pone = r"ご利用年月日,ご利用先,ご利用金額\(円\),割引額\(円\),ご請求金額\(円\),,お支払区分,入金,備考"
 
   # read csv file
   with open(csvfile, "rb") as f:
@@ -90,6 +93,9 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   elif re.search(ptn_jwest, "".join(lines).replace('"','')):
     print("JWEST CARD")
     ptn = ptn_jwest
+  elif re.search(ptn_pone, "".join(lines).replace('"','')):
+    print("PONE CARD")
+    ptn = ptn_pone
   else:
     print("error: csv header no match")
     exit(1)
@@ -158,6 +164,24 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       mark = dic[b]["mark"] if biko in dic else ""
       account = "JWEST"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif ptn == ptn_pone:
+    for index, row in df.iterrows():
+      date = datefmt(row["ご利用年月日"])
+      if str(row["備考（金額単位：円　※現地通貨額は除く）"]) != "nan":
+        biko = row["ご利用先"] + "   " + str(row["備考（金額単位：円　※現地通貨額は除く）"])
+      else:
+        biko = row["ご利用先"]
+      biko1 = row["ご利用先"]
+      b = re.sub(r"[0-9]","",biko1)
+      himoku = dic[b]["himoku"] if biko1 in dic else ""
+      utiwake = dic[b]["utiwake"] if biko1 in dic else ""
+      income = 0
+      outgo = tofloat(row["ご請求金額(円)"]) - tofloat(row["入金"])
+      if str(outgo) == "nan":
+        continue
+      mark = dic[b]["mark"] if biko1 in dic else ""
+      account = "Pone"
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
 
   # filter by start, end dates
   #pprint.pprint(mat, width=200,depth=2)
@@ -211,7 +235,7 @@ if __name__ == "__main__":
     values = getDataCsv(file)
   else:
     values = getDataHtml(file)
-  pprint.pprint(values, width=200, depth=2)
+  pprint.pprint(values, width=140, depth=2)
   print("sending %d records" % len(values))
   import myGSpread
   myGSpread.appendRows(values, "家計簿", "検索")
