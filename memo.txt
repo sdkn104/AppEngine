@@ -2,11 +2,12 @@
 # to test, ie, to invoke local webservice and view in local web browser
 gcloud app browse
 
-# deploy
+# deploy app
 -write requirements.txt for python package required
 gcloud app deploy app.yaml
+gcloud app deploy cron.yaml
 
-# start stand alone (not app engine)
+# start stand alone web app (not app engine)
 pip3 install -r requirements_server.txt
 sudo python3 main_server.py >& /dev/null &  # -> log file = flask.log
 
