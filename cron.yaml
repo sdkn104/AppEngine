@@ -5,7 +5,7 @@ cron:
 
 - description: "check Alive"
   url: /checkAlive
-  schedule: every 60 minutes from 0:19 to 23:59
+  schedule: every 120 minutes from 0:19 to 23:59
 
 - description: "check Alive of Web server on GCE"
   url: /checkAliveOfWebOnGCE
