@@ -4,6 +4,7 @@
 
 from flask import Flask, request
 import subprocess
+import re
 
 import myGmail
 import myBigQuery
@@ -70,17 +71,20 @@ def sendStock():
     myStock.sendToBQ(names_jp, names_bloom, "stock_rcv")
     return 'done'
 
+# ---- DOWNLOADER ----------
+
 @app.route("/dl_top")
 @app.route("/"+private.project_app+"/dl_top")
 def download_top():
-    return "<form action='/dl_download'><input type='text'></form>"
+    return "<form action='/dl_download'>URL:<input type='text' name=url><br>File Name:<input type='text' name=fn><br><input type=submit value='download'></form>"
 
 @app.route("/dl_ls")
 @app.route("/"+private.project_app+"/dl_ls")
 def download_ls():
-    proc = subprocess.run(["ls", "-l", staticFolder+"/uploads"], stdout=subprocess.PIPE)
-    return proc.stdout
-
+    proc = subprocess.run(["ls", "-l", staticFolder+"/uploads"], stdout=subprocess.PIPE, universal_newlines=True)
+    dirs = proc.stdout.split("\n")
+    dirs = [ re.sub(r'(.* +)([^ ]+) *$', r'\1 <a href="http://35.203.132.149/static/uploads/\2">\2</a><br>', line) for line in dirs]
+    return "\n".join(dirs)
 
 @app.route("/dl_download")
 @app.route("/"+private.project_app+"/dl_download")
@@ -88,7 +92,9 @@ def download_download():
     url = request.args.get('url', '')
     fn = request.args.get('fn', '')
     proc = subprocess.Popen(["curl","-m","1800","-o",staticFolder+"/uploads/"+fn,url])
-    return "ss"
+    return "<h2>start downloading...</h2><a href='/dl_ls'>ls</a>"
+
+
 
 @app.route("/"+private.project_app+"/gmail_test")
 def gmail_test():
