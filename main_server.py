@@ -63,7 +63,7 @@ def gmail():
 @app.route("/sendStock")
 @app.route("/"+private.project_app+"/sendStock")
 def sendStock():
-    names_jp = ["1308", "1330", "9984", "1699", "6753", "7203","1639"]
+    names_jp = ["1308", "1330", "9984", "1699", "6753", "7203","1639","1622"]
     names_bloom = ["NKY:IND", "INDU:IND", "USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
                    "VWO:US", "IYR:US", "IVV:US", "VNM:US",
                    "2836:HK"]
