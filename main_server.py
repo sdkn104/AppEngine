@@ -84,7 +84,7 @@ def download_ls():
     proc = subprocess.run(["ls", "-l", staticFolder+"/uploads"], stdout=subprocess.PIPE, universal_newlines=True)
     dirs = proc.stdout.split("\n")
     dirs = [ re.sub(r'(.* +)([^ ]+) *$', r'\1 <a href="http://35.203.132.149/static/uploads/\2">\2</a><br>', line) for line in dirs]
-    return "\n".join(dirs)
+    return "\n".join(dirs) + "<br><br><a href='/dl_top'>top</a>"
 
 @app.route("/dl_download")
 @app.route("/"+private.project_app+"/dl_download")
