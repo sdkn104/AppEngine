@@ -11,6 +11,10 @@ cron:
   url: /checkAliveOfWebOnGCE
   schedule: every day 05:03
 
+- description: "clean Yahoo Mail"
+  url: /cleanYahooMail
+  schedule: every day 05:05
+
 - description: "send stock price data"
   url: /sendStock
   schedule: every day 23:03

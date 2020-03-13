@@ -51,6 +51,13 @@ def unyouHtml():
     values = importStockCsv.getDataHtml(data)
     myGSpread.appendRows(values,"運用履歴", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+
+# Yahoo mail cleaning
+@app.route("/cleanYahooMail", methods=['GET'])
+def cleanYahooMail():
+    import yahooMailClean
+    yahooMailClean.cleanMail()
+    return make_response(str("Finish"),[("Content-Type","text/plain; charset=utf-8")])
     
 # transfer to other server
 @app.route('/<path:path>')
