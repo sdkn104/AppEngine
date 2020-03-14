@@ -55,7 +55,7 @@ def cleanMails():
     src_imap.close()
     src_imap.logout()
 
-  except as e:
+  except Exception as e:
     print(str(e) + "\n")
 
 # エントリーポイント

@@ -7,7 +7,11 @@ gcloud app browse
 gcloud app deploy app.yaml
 gcloud app deploy cron.yaml
 
-# start stand alone web app (not app engine)
+# start stand alone web app (not app engine, on server -- compute engine) 
 pip3 install -r requirements_server.txt
 sudo python3 main_server.py >& /dev/null &  # -> log file = flask.log
+
+# start cron on server
+sudo set_cron_server.sh
+service cron restart
 
