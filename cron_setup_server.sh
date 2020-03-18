@@ -3,7 +3,7 @@
 # setting cron for server
 
 # 登録したいジョブ
-cron_job_line="23 3 * * * python3 /home/sdkn104/AppEngine/yahooMailClean.py"
+cron_job_line="23 3 * * * python3 /home/sdkn104home/AppEngine/yahooMailClean.py"
 
 # crontabファイル
 cron_file="/var/spool/cron/crontabs/root"
