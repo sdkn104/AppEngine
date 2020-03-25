@@ -107,12 +107,13 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       rate = tofloat(row["為替レート"])
       amount = tofloat(row["数量［株］"]) * sign
       price = tofloat(row["単価［USドル］"]) * rate
-      paid = tofloat(row["受渡金額［USドル］"]) * sign * float(rate)
+      p = row["受渡金額［USドル］"] if row["受渡金額［USドル］"] != "-" else row["約定代金［USドル］"]
+      paid = tofloat(p) * sign * float(rate)
       code = row["ティッカー"]
       comment = "%s USDrate=%g" % (code, rate)
       mat.append([date, name, account, paid, amount, price, comment])
       name = "USDJPY"
-      amount = tofloat(row["受渡金額［USドル］"]) * sign * -1
+      amount = tofloat(p) * sign * -1
       price = rate
       paid = amount * rate
       comment = code
