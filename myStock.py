@@ -113,4 +113,7 @@ if __name__ == "__main__":
     names_jp = ["1322","1323"]
     names_bloom = ["2836:HK","USDJPY:CUR","AAPL:US", "1322:JP"]
     sendToBQ(names_jp, names_bloom, "stock_rcv")
-
+    #import myBigQuery
+    #myBigQuery.loadBigQuery("stock_rcv", [["2020-02-20", "1622:JP", 20000, 20000, 20000, 20000, 0]])
+    
+ 
