@@ -69,12 +69,12 @@ def sendAlertMail(devName, lastTime):
 #@profile
 def checkAlive():
     s = ""
-    s += checkAliveFor("basic", 7200, "%Y-%m-%d %H:%M:%S JST", 
-            "SELECT MAX(DATA_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.basic_rcv`")
+    #s += checkAliveFor("basic", 7200, "%Y-%m-%d %H:%M:%S JST", 
+    #        "SELECT MAX(DATA_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.basic_rcv`")
     #s += checkAliveFor("espnow3", 7200, "%Y-%m-%d %H:%M:%S JST",
     #        "SELECT MAX(DATA_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.espnow3_rcv`")
-    s += checkAliveFor("espnow5", 7200, "%Y-%m-%d %H:%M:%S JST",
-            "SELECT MAX(DATA_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.espnow5_rcv`")
+    #s += checkAliveFor("espnow5", 7200, "%Y-%m-%d %H:%M:%S JST",
+    #        "SELECT MAX(DATA_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.espnow5_rcv`")
     s += checkAliveFor("jam", 3600, "%Y-%m-%d %H:%M:%S JST",
             "SELECT MAX(SEND_TIME) as TIME FROM `"+private.project_id+".HOME_IoT.jam_rcv`")
     #s += checkAliveFor("orangepi", 7200, "%Y-%m-%d %H:%M:%S JST",
