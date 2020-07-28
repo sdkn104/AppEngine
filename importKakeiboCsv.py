@@ -260,10 +260,9 @@ def getDataHtml(html):
           himoku = dic[b]["himoku"] if biko in dic else ""
           utiwake = dic[b]["utiwake"] if biko in dic else ""
           mark = dic[b]["mark"] if biko in dic else ""
-          print(csvRow[4].replace("\\","").replace(",","").strip())
-          income = tofloat(csvRow[4].replace("\\","").replace(",","").strip())
-          outgo = tofloat(csvRow[3].replace("\\","").replace(",","").strip())
-          zandaka = tofloat(csvRow[5].replace("\\","").replace(",","").strip())
+          income = tofloat(csvRow[4].replace("\\","").replace(chr(165),"").replace(",","").strip())
+          outgo = tofloat(csvRow[3].replace("\\","").replace(chr(165),"").replace(",","").strip())
+          zandaka = tofloat(csvRow[5].replace("\\","").replace(chr(165),"").replace(",","").strip())
           mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
     mat.append(["","",date, "使途不明金", "残高合せ込み", zandaka, "", 0, 0, "", account])
 
