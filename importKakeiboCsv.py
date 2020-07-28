@@ -182,7 +182,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       mark = dic[b]["mark"] if biko1 in dic else ""
       account = "P-one"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
-
+    
   # filter by start, end dates
   #pprint.pprint(mat, width=200,depth=2)
   s_start = start.strftime("%Y/%m/%d")
@@ -205,26 +205,69 @@ def getDataHtml(html):
     html_str = html
 
   soup = BeautifulSoup(html_str, "html.parser")
-  div = soup.findAll("div",{"class":"mic-block-scroll-table__inner"})[0]
-  table = div.findAll("table")[0]
-  rows = table.findAll("tr")
-  mat = []
-  for row in rows:
-      csvRow = []
-      for cell in row.findAll(['td', 'th']):
-          csvRow.append(cell.get_text())
-      print(csvRow)
-      if len(csvRow) == 6:
-        date = datefmt(csvRow[0])
-        biko = csvRow[1]
-        b = re.sub(r"[0-9]","",biko)
-        himoku = dic[b]["himoku"] if biko in dic else ""
-        utiwake = dic[b]["utiwake"] if biko in dic else ""
-        mark = dic[b]["mark"] if biko in dic else ""
-        income = 0
-        outgo = tofloat(csvRow[5].replace("円","").replace(",","").strip())
-        account = "MICARD"
-        mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  
+  title = soup.findAll("title")[0].get_text();
+  if re.search(r"エムアイカード", title):
+    div = soup.findAll("div",{"class":"mic-block-scroll-table__inner"})[0]
+    table = div.findAll("table")[0]
+    rows = table.findAll("tr")
+    mat = []
+    for row in rows:
+        csvRow = []
+        for cell in row.findAll(['td', 'th']):
+            csvRow.append(cell.get_text())
+        print(csvRow)
+        if len(csvRow) == 6:
+          date = datefmt(csvRow[0])
+          biko = csvRow[1]
+          b = re.sub(r"[0-9]","",biko)
+          himoku = dic[b]["himoku"] if biko in dic else ""
+          utiwake = dic[b]["utiwake"] if biko in dic else ""
+          mark = dic[b]["mark"] if biko in dic else ""
+          income = 0
+          outgo = tofloat(csvRow[5].replace("円","").replace(",","").strip())
+          account = "MICARD"
+          mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  else:
+    # MoneyLook
+    acc = soup.findAll("li", {"id":"view_td_span_companynm"})[0].get_text()
+    if "三井住友" in acc:
+      account = "さくら総合"
+    elif "三菱" in acc:
+      account = "MUFG銀行"
+    elif "楽天銀行" in acc:
+      account = "イーバンク"
+    elif "十六銀行" in acc:
+      account = "十六銀行"
+    elif "ゆうちょ" in acc:
+      account = "郵便貯金普通"
+    else:
+      account = "？？？"
+      
+    div = soup.findAll("div",{"id":"trans_detail_jqgrid_box"})[0]
+    table = div.findAll("table")[1]
+    rows = table.findAll("tr")
+    mat = []
+    for row in rows:
+        csvRow = []
+        for cell in row.findAll(['td', 'th']):
+            csvRow.append(cell.get_text())
+        print(csvRow)
+        if len(csvRow) == 15 and csvRow[2] != "":
+          date = datefmt(csvRow[2])
+          biko = csvRow[6]
+          b = re.sub(r"[0-9]","",biko)
+          himoku = dic[b]["himoku"] if biko in dic else ""
+          utiwake = dic[b]["utiwake"] if biko in dic else ""
+          mark = dic[b]["mark"] if biko in dic else ""
+          print(csvRow[4].replace("\\","").replace(",","").strip())
+          income = tofloat(csvRow[4].replace("\\","").replace(",","").strip())
+          outgo = tofloat(csvRow[3].replace("\\","").replace(",","").strip())
+          zandaka = tofloat(csvRow[5].replace("\\","").replace(",","").strip())
+          mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+    mat.append(["","",date, "使途不明金", "残高合せ込み", zandaka, "", 0, 0, "", account])
+
+
   print("read %d rows" % len(rows))
   return mat
 
