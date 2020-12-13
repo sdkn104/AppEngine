@@ -53,7 +53,7 @@ def unyouHtml():
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
 
 # transfer to other server
-@app.route('/<path:path>')
+@app.route('/<path:path>', methods=['POST','GET'])
 def catch_all_private(path):
     url = "http://35.203.132.149:80" + request.script_root + request.full_path
     print("redirecting to "+url)

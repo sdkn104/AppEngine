@@ -94,6 +94,33 @@ def download_download():
     proc = subprocess.Popen(["curl","-m","1800","-o",staticFolder+"/uploads/"+fn,url])
     return "<h2>start downloading...</h2><a href='/dl_ls'>ls</a>"
 
+# upload 
+@app.route("/dl_upload")
+@app.route("/"+private.project_app+"/dl_upload")
+def upload():
+    return '''
+    <form method="post" action="/dl_do_upload">
+      <input type="file" name="file">
+      <input type="submit" value="upload">
+    </form>
+'''
+
+@app.route('/dl_do_upload', methods=['POST','GET'])
+@app.route("/"+private.project_app+"/dl_do_upload", methods=['POST'])
+def do_upload():
+    return 'error here'
+    if 'file' not in request.files:
+        return 'file not speified.'
+
+    # file FileStorage
+    # https://tedboy.github.io/flask/generated/generated/werkzeug.FileStorage.html
+    fs = request.files['file']
+
+    app.logger.info('file_name={}'.format(fs.filename))
+    app.logger.info('content_type={} content_length={}, mimetype={}, mimetype_params={}'.format(
+        fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
+
+    fs.save(staticFolder+'/upload/'+fs.filename)
 
 
 @app.route("/"+private.project_app+"/gmail_test")
