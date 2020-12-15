@@ -108,7 +108,7 @@ def upload():
 @app.route('/dl_do_upload', methods=['POST','GET'])
 @app.route("/"+private.project_app+"/dl_do_upload", methods=['POST'])
 def do_upload():
-    return 'error here'
+    app.logger.info("aaa")
     if 'file' not in request.files:
         return 'file not speified.'
 

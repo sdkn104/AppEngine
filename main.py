@@ -57,7 +57,10 @@ def unyouHtml():
 def catch_all_private(path):
     url = "http://35.203.132.149:80" + request.script_root + request.full_path
     print("redirecting to "+url)
-    r = requests.get(url)
+    if request.method == "GET":
+        r = requests.get(url)
+    if request.method == "POST":
+        r = requests.post(url)
     return make_response(r.content, r.status_code)
 
 if __name__ == '__main__':
