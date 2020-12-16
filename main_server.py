@@ -76,7 +76,7 @@ def sendStock():
 @app.route("/dl_top")
 @app.route("/"+private.project_app+"/dl_top")
 def download_top():
-    return "<form action='/dl_download'>URL:<input type='text' name=url><br>File Name:<input type='text' name=fn><br><input type=submit value='download'></form>"
+    return "<form action='/dl_download'>URL:<input type='text' name=url><br>File Name:<input type='text' name=fn><br><input type=submit value='download'></form><br><a href='/dl_ls'>dl_ls</a>"
 
 @app.route("/dl_ls")
 @app.route("/"+private.project_app+"/dl_ls")
@@ -111,15 +111,12 @@ def do_upload():
     app.logger.info("aaa")
     if 'file' not in request.files:
         return 'file not speified.'
-
     # file FileStorage
     # https://tedboy.github.io/flask/generated/generated/werkzeug.FileStorage.html
     fs = request.files['file']
-
     app.logger.info('file_name={}'.format(fs.filename))
     app.logger.info('content_type={} content_length={}, mimetype={}, mimetype_params={}'.format(
         fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
-
     fs.save(staticFolder+'/upload/'+fs.filename)
 
 
