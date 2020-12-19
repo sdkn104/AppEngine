@@ -6,6 +6,7 @@ from oauth2client import file, client, tools
 
 from email.mime.text import MIMEText
 import base64
+import email
 import urllib.parse
 import urllib.request
 
@@ -20,6 +21,7 @@ import private
 
 # If modifying these scopes, delete the file CLIENT_TOKEN_FILE
 SCOPES = 'https://www.googleapis.com/auth/gmail.send'
+SCOPES = ['https://www.googleapis.com/auth/gmail.send','https://www.googleapis.com/auth/gmail.readonly']
 CLIENT_SECRET_FILE = 'credentials/client_secret.json'
 CLIENT_TOKEN_FILE = "credentials/gmail-token.json"
 
@@ -30,6 +32,7 @@ def get_credentials():
     # time.
     store = file.Storage(CLIENT_TOKEN_FILE)
     credentials = store.get()
+    #credentials = None
     if not credentials or credentials.invalid:  # invalid does not mean access token expiration
         # Autiorization flow (need to interact with Web Browser)
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
@@ -99,6 +102,38 @@ def sendGmail(sender, to, subject, message_text):
 def sendAlertMail(subject, message_text):
     sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp;sdkn104@gmail.com", subject, message_text)
 
+# メッセージの一覧を取得
+def gmail_get_messages():
+    creds = get_credentials()
+    service = build('gmail', 'v1', http=creds.authorize(Http()))
+    # メッセージの一覧を取得
+    messages = service.users().messages()
+    msg_list = messages.list(userId='me', maxResults=5).execute()
+    # 取得したメッセージの一覧を表示
+    for msg in msg_list['messages']:
+        topid = msg['id']
+        msg = messages.get(userId='me', id=topid).execute()
+        print("--------")
+        #print(msg['snippet']) # 要約を表示
+        #print("---")
+        data = messages.get(userId='me', id=topid, format='raw').execute()
+        raw_data = base64.urlsafe_b64decode(data['raw'])
+        eml = email.message_from_bytes(raw_data)
+        print(eml["Subject"])
+        print(eml["From"])
+        print(eml["To"])
+        print(eml["Date"])
+        body = ""
+        for part in eml.walk(): # (4)
+            if part.get_content_type() != 'text/plain': # (5)
+                continue
+            s = part.get_payload(decode=True)
+            if isinstance(s, bytes):
+                charset = part.get_content_charset() or 'iso-2022-jp' # (6)
+                s = s.decode(str(charset), errors="replace")
+            body += s  
+        print(body)
+
 def test():
     msg = sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp;sdkn104@gmail.com", "test", "this is test")
     if msg == None:
@@ -106,4 +141,4 @@ def test():
 
 if __name__ == '__main__':
     test()
-
+    gmail_get_messages()

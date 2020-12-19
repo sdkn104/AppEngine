@@ -2,10 +2,12 @@ import imaplib
 import email
 import pprint
 
+import private
+
 # 転送元メールアカウント情報
 src_mail_server = "imap.mail.yahoo.co.jp"
 src_mail_user = "sdkn104@yahoo.co.jp"
-src_mail_pass = "gorosan"
+src_mail_pass = private.yahoo_mail_password
 #src_mailbox = "INBOX"
 src_mailbox = "Trash"
 dst_mailbox = '"00&MFQwf3ux-"'  # 00ごみ箱
