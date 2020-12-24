@@ -119,6 +119,12 @@ def do_upload():
         fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
     fs.save(staticFolder+'/upload/'+fs.filename)
 
+@app.route('/gmail_list', methods=['GET'])
+@app.route("/"+private.project_app+"/gmail_list", methods=['GET'])
+def gmail_list():
+    s = myGmail.gmail_get_messages()
+    return s
+
 
 @app.route("/"+private.project_app+"/gmail_test")
 def gmail_test():
