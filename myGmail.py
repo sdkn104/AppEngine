@@ -108,7 +108,7 @@ def gmail_get_messages():
     service = build('gmail', 'v1', http=creds.authorize(Http()))
     # メッセージの一覧を取得
     messages = service.users().messages()
-    msg_list = messages.list(userId='me', maxResults=5).execute()
+    msg_list = messages.list(userId='me', maxResults=20).execute()
     # 取得したメッセージの一覧を表示
     text = ""
     for msg in msg_list['messages']:
