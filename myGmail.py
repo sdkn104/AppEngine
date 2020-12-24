@@ -110,19 +110,20 @@ def gmail_get_messages():
     messages = service.users().messages()
     msg_list = messages.list(userId='me', maxResults=5).execute()
     # 取得したメッセージの一覧を表示
+    text = ""
     for msg in msg_list['messages']:
         topid = msg['id']
         msg = messages.get(userId='me', id=topid).execute()
-        print("--------")
+        text += "-------\n"
         #print(msg['snippet']) # 要約を表示
-        #print("---")
+        print("---")
         data = messages.get(userId='me', id=topid, format='raw').execute()
         raw_data = base64.urlsafe_b64decode(data['raw'])
         eml = email.message_from_bytes(raw_data)
-        print(eml["Subject"])
-        print(eml["From"])
-        print(eml["To"])
-        print(eml["Date"])
+        text += "Subject:"+eml["Subject"] + "\n"
+        text += eml["From"]+ "\n"
+        text += eml["To"] + "\n"
+        text += eml["Date"] + "\n"
         body = ""
         for part in eml.walk(): # (4)
             if part.get_content_type() != 'text/plain': # (5)
@@ -132,7 +133,9 @@ def gmail_get_messages():
                 charset = part.get_content_charset() or 'iso-2022-jp' # (6)
                 s = s.decode(str(charset), errors="replace")
             body += s  
-        print(body)
+        text += body + "\n"
+    #print(text)
+    return text
 
 def test():
     msg = sendGmail("sdkn104home@gmail.com", "sdkn104@yahoo.co.jp;sdkn104@gmail.com", "test", "this is test")
@@ -141,4 +144,5 @@ def test():
 
 if __name__ == '__main__':
     test()
-    gmail_get_messages()
+    s = gmail_get_messages()
+    print(s)
