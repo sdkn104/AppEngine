@@ -75,7 +75,7 @@ def catch_all_private(path):
     if request.method == "GET":
         r = requests.get(url)
     if request.method == "POST":
-        r = requests.post(url)
+        r = requests.post(url, data=request.form)
     return make_response(r.content, r.status_code)
 
 if __name__ == '__main__':
