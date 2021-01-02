@@ -2,6 +2,9 @@
 # to test, ie, to invoke local webservice and view in local web browser
 gcloud app browse
 
+# to test
+python3 main.py
+
 # deploy app
 -write requirements.txt for python package required
 gcloud app deploy app.yaml

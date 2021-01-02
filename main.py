@@ -11,9 +11,24 @@ import private
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-@app.route("/")
+
+def loginCheck():
+    html = "<form method='POST'>User Name<input type='text' name=username><br>Password<input type='password' name='password'><br><input type='submit'></form>"
+    if request.method == "POST" and "username" in request.form and "password" in request.form and request.form['username'] == private.app_username and request.form['password'] == private.app_password:
+        return None
+    else:
+        return html
+
+@app.route("/", methods=["GET","POST"])
 def hello():
     return 'Hello World! This page is created by App Engine service2.'
+
+@app.route("/top", methods=["GET","POST"])
+def top():
+    h = loginCheck()
+    if h is not None:
+        return h
+    return "<a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br><a href='/gmail_list'>gmail list</a><br><a href='/dl_top'>download</a><br>"
 
 
 @app.route('/checkAliveOfWebOnGCE')

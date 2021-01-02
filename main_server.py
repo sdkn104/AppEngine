@@ -19,7 +19,13 @@ staticFolder = "/home/sdkn104home/static"
 # called `app` in `main.py`.
 app = Flask(__name__, static_folder=staticFolder)
 
-
+def loginCheck():
+    html = "<form method='POST'>User Name<input type='text' name=username><br>Password<input type='password' name='password'><br><input type='submit'></form>"
+    if request.method == "POST" and "username" in request.form and "password" in request.form and request.form['username'] == private.app_username and request.form['password'] == private.app_password:
+        return None
+    else:
+        return html
+        
 @app.route("/")
 @app.route("/"+private.project_app)
 @app.route("/"+private.project_app+"/")
@@ -122,6 +128,9 @@ def do_upload():
 @app.route('/gmail_list', methods=['GET'])
 @app.route("/"+private.project_app+"/gmail_list", methods=['GET'])
 def gmail_list():
+    h = loginCheck()
+    if h is not None:
+        return h
     s = myGmail.gmail_get_messages()
     return s
 
