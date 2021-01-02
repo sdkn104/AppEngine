@@ -125,8 +125,8 @@ def do_upload():
         fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
     fs.save(staticFolder+'/upload/'+fs.filename)
 
-@app.route('/gmail_list', methods=['GET'])
-@app.route("/"+private.project_app+"/gmail_list", methods=['GET'])
+@app.route('/gmail_list', methods=['GET','POST'])
+@app.route("/"+private.project_app+"/gmail_list", methods=['GET','POST'])
 def gmail_list():
     h = loginCheck()
     if h is not None:
