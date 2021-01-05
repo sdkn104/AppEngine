@@ -28,7 +28,7 @@ def top():
     h = loginCheck()
     if h is not None:
         return h
-    return "<a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br><a href='/gmail_list'>gmail list</a><br><a href='/dl_top'>download</a><br>"
+    return "<a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br><a href='/gmail_list'>gmail list</a><br><a href='/dl_top'>download</a><br><a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/gmail_list'>gmail_list nodeJS</a><br>"
 
 
 @app.route('/checkAliveOfWebOnGCE')
