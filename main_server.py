@@ -19,12 +19,6 @@ staticFolder = "/home/sdkn104home/static"
 # called `app` in `main.py`.
 app = Flask(__name__, static_folder=staticFolder)
 
-def loginCheck():
-    html = "<form method='POST'>User Name<input type='text' name=username><br>Password<input type='password' name='password'><br><input type='submit'></form>"
-    if request.method == "POST" and "username" in request.form and "password" in request.form and request.form['username'] == private.app_username and request.form['password'] == private.app_password:
-        return None
-    else:
-        return html
         
 @app.route("/")
 @app.route("/"+private.project_app)
@@ -43,28 +37,6 @@ def sendJamInfo():
 def doCheckAlive():
     s = checkAlive.checkAlive()
     return s
-
-@app.route("/"+private.project_app+"/insertBQ")
-def insertBQ():
-    table = request.args.get('table', '')
-    value1 = request.args.get('value1', '')
-    value2 = request.args.get('value2', '')
-    value3 = request.args.get('value3', '')
-    value4 = request.args.get('value4', '')
-    myBigQuery.loadBigQuery(table, [[value1, value2, value3, value4]])
-    import gc
-    gc.collect()
-    return 'done inserting to '+table+", ("+value1+", "+value2+", "+value3+", "+value4+")"
-
-@app.route("/"+private.project_app+"/gmail")
-def gmail():
-    addr_to = request.args.get('to', '')
-    subject = request.args.get('subject', '')
-    body = request.args.get('body', '')
-    if addr_to == "":
-        addr_to = "sdkn104@yahoo.co.jp"
-    myGmail.sendGmail("sdkn104home@gmail.com", addr_to, subject, body)
-    return 'done sending gmail '+subject+" to "+addr_to
 
 @app.route("/sendStock")
 @app.route("/"+private.project_app+"/sendStock")
@@ -101,44 +73,30 @@ def download_download():
     return "<h2>start downloading...</h2><a href='/dl_ls'>ls</a>"
 
 # upload 
-@app.route("/dl_upload")
-@app.route("/"+private.project_app+"/dl_upload")
-def upload():
-    return '''
-    <form method="post" action="/dl_do_upload">
-      <input type="file" name="file">
-      <input type="submit" value="upload">
-    </form>
-'''
+#@app.route("/dl_upload")
+#@app.route("/"+private.project_app+"/dl_upload")
+#def upload():
+#    return '''
+#    <form method="post" action="/dl_do_upload">
+#      <input type="file" name="file">
+#      <input type="submit" value="upload">
+#    </form>
+#'''
 
-@app.route('/dl_do_upload', methods=['POST','GET'])
-@app.route("/"+private.project_app+"/dl_do_upload", methods=['POST'])
-def do_upload():
-    app.logger.info("aaa")
-    if 'file' not in request.files:
-        return 'file not speified.'
-    # file FileStorage
-    # https://tedboy.github.io/flask/generated/generated/werkzeug.FileStorage.html
-    fs = request.files['file']
-    app.logger.info('file_name={}'.format(fs.filename))
-    app.logger.info('content_type={} content_length={}, mimetype={}, mimetype_params={}'.format(
-        fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
-    fs.save(staticFolder+'/upload/'+fs.filename)
+#@app.route('/dl_do_upload', methods=['POST','GET'])
+#@app.route("/"+private.project_app+"/dl_do_upload", methods=['POST'])
+#def do_upload():
+#    app.logger.info("aaa")
+#    if 'file' not in request.files:
+#        return 'file not speified.'
+#    # file FileStorage
+#    # https://tedboy.github.io/flask/generated/generated/werkzeug.FileStorage.html
+#    fs = request.files['file']
+#    app.logger.info('file_name={}'.format(fs.filename))
+#    app.logger.info('content_type={} content_length={}, mimetype={}, mimetype_params={}'.format(
+#        fs.content_type, fs.content_length, fs.mimetype, fs.mimetype_params))
+#    fs.save(staticFolder+'/upload/'+fs.filename)
 
-@app.route('/gmail_list', methods=['GET','POST'])
-@app.route("/"+private.project_app+"/gmail_list", methods=['GET','POST'])
-def gmail_list():
-    h = loginCheck()
-    if h is not None:
-        return h
-    s = myGmail.gmail_get_messages()
-    return s
-
-
-@app.route("/"+private.project_app+"/gmail_test")
-def gmail_test():
-    myGmail.test()
-    return 'sent'
 
 @app.route("/test")
 @app.route("/"+private.project_app+"/test")

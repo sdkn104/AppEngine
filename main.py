@@ -67,6 +67,42 @@ def unyouHtml():
     myGSpread.appendRows(values,"運用履歴", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
 
+@app.route('/gmail_list', methods=['GET','POST'])
+@app.route("/"+private.project_app+"/gmail_list", methods=['GET','POST'])
+def gmail_list():
+    h = loginCheck()
+    if h is not None:
+        return h
+    import myGmail
+    s = myGmail.gmail_get_messages()
+    return s
+
+
+@app.route("/insertBQ")
+def insertBQ():
+    import myBigQuery
+    table = request.args.get('table', '')
+    value1 = request.args.get('value1', '')
+    value2 = request.args.get('value2', '')
+    value3 = request.args.get('value3', '')
+    value4 = request.args.get('value4', '')
+    myBigQuery.loadBigQuery(table, [[value1, value2, value3, value4]])
+    import gc
+    gc.collect()
+    return 'done inserting to '+table+", ("+value1+", "+value2+", "+value3+", "+value4+")"
+
+@app.route("/gmail")
+def gmail():
+    import myGmail
+    addr_to = request.args.get('to', '')
+    subject = request.args.get('subject', '')
+    body = request.args.get('body', '')
+    if addr_to == "":
+        addr_to = "sdkn104@yahoo.co.jp"
+    myGmail.sendGmail("sdkn104home@gmail.com", addr_to, subject, body)
+    return 'done sending gmail '+subject+" to "+addr_to
+
+
 # transfer to other server
 @app.route('/<path:path>', methods=['POST','GET'])
 def catch_all_private(path):
