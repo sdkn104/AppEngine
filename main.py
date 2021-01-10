@@ -28,7 +28,12 @@ def top():
     h = loginCheck()
     if h is not None:
         return h
-    return "<a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br><a href='/gmail_list'>gmail list</a><br><a href='/dl_top'>download</a><br><a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/gmail_list'>gmail_list nodeJS</a><br>"
+    return '''
+        <a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br>
+        <a href='/dl_top'>download</a><br>
+        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/gmail_list'>gmail_list nodeJS</a><br>
+        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/ymail_list'>ymail_list nodeJS</a><br>
+    '''
 
 
 @app.route('/checkAliveOfWebOnGCE')
@@ -66,16 +71,6 @@ def unyouHtml():
     values = importStockCsv.getDataHtml(data)
     myGSpread.appendRows(values,"運用履歴", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
-
-@app.route('/gmail_list', methods=['GET','POST'])
-@app.route("/"+private.project_app+"/gmail_list", methods=['GET','POST'])
-def gmail_list():
-    h = loginCheck()
-    if h is not None:
-        return h
-    import myGmail
-    s = myGmail.gmail_get_messages()
-    return s
 
 
 @app.route("/insertBQ")
