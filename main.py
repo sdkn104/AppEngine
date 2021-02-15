@@ -21,7 +21,7 @@ def loginCheck():
 
 @app.route("/", methods=["GET","POST"])
 def hello():
-    return 'Hello World! This page is created by App Engine service2.'
+    return 'Hello World! This page is created by App Engine service2.<br><a href="/top">top</a><br>'
 
 @app.route("/top", methods=["GET","POST"])
 def top():
@@ -31,9 +31,7 @@ def top():
     return '''
         <a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br>
         <a href='/dl_top'>download</a><br>
-        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/gmail_list'>gmail_list nodeJS</a><br>
-        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/ymail_list'>ymail_list nodeJS</a><br>
-        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/static/ftp_nas_console.htm'>nas ftp nodeJS</a><br>
+        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/'>top nodeJS</a><br>
     '''
 
 
