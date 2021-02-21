@@ -29,27 +29,10 @@ def top():
     if h is not None:
         return h
     return '''
-        <a href='/checkAliveOfWebOnGCE'>checkAliveOfWebOnGCE</a><br>
         <a href='/dl_top'>download</a><br>
         <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/'>top nodeJS</a><br>
     '''
 
-
-@app.route('/checkAliveOfWebOnGCE')
-def checkAliveOfWebOnGCE():
-  try:
-    url = "http://35.203.132.149:80/"+private.project_app
-    r = requests.get(url)
-    if r.status_code > 299:
-        import myGmail
-        myGmail.sendAlertMail("Alert Mail: server on GCE down", \
-                              "Web server on GCE not respond. I am on AppEngine.")
-        return "Checking alive of GCE Web server... NG."
-    return "Checking alive of GCE Web server... OK."
-  except:
-    import myGmail
-    myGmail.sendAlertMail("Alert Mail: error", "Error in checkAliveOfWebOnGCE() on AppEngine.")
-    raise
 
 # receive Kakeibo HTML 
 @app.route("/"+private.project_app+"/kakeiboHtml", methods=['POST'])

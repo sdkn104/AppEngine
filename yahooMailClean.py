@@ -1,3 +1,8 @@
+
+
+# ########### THIS Script is not used NOW. 2021.2.20 ##########################################
+
+
 import imaplib
 import email
 import pprint
