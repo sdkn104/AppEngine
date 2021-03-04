@@ -11,6 +11,8 @@ import private
 # called `app` in `main.py`.
 app = Flask(__name__)
 
+nodeServiceHost = "node-app-dot-proven-mystery-220011.an.r.appspot.com"
+gceHost = "35.203.132.149:80"
 
 def loginCheck():
     html = "<form method='POST'>User Name<input type='text' name=username><br>Password<input type='password' name='password'><br><input type='submit'></form>"
@@ -30,8 +32,8 @@ def top():
         return h
     return '''
         <a href='/dl_top'>download</a><br>
-        <a href='https://node-app-dot-proven-mystery-220011.an.r.appspot.com/'>top nodeJS</a><br>
-    '''
+        <a href='{nodeServiceHost}'>top nodeJS</a><br>
+    '''.format(nodeServiceHost=nodeServiceHost)
 
 
 # receive Kakeibo HTML 
@@ -79,12 +81,18 @@ def gmail():
     myGmail.sendGmail("sdkn104home@gmail.com", addr_to, subject, body)
     return 'done sending gmail '+subject+" to "+addr_to
 
-
-# transfer to other server
-@app.route('/<path:path>', methods=['POST','GET'])
-def catch_all_private(path):
-    url = "http://35.203.132.149:80" + request.script_root + request.full_path
+# redirect to AppEngine node-app service
+@app.route('/node/<path:path>', methods=['POST','GET'])
+def catch_node(path):
+    url = "http://" + nodeServiceHost + (request.script_root + request.full_path).replace("/node","",1)
     print("redirecting to "+url)
+    return redirect(url)
+
+# transfer to GCE
+@app.route('/<path:path>', methods=['POST','GET'])
+def catch_all_private(path):    
+    url = "http://" + gceHost + request.script_root + request.full_path
+    print("transferring to "+url)
     if request.method == "GET":
         r = requests.get(url)
     if request.method == "POST":

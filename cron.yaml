@@ -19,3 +19,7 @@ cron:
     min_backoff_seconds: 20
     job_retry_limit: 3
 
+- description: "clean Yahoo Trash Mailbox"
+  url: /node/cleanYahooMail  # redirect to /cleanYahooMail of node-app service
+  schedule: every day 03:03
+
