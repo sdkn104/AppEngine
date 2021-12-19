@@ -9,7 +9,7 @@ import io
 import csv
 from google.cloud import bigquery  # require abount 50MB memory
 
-credPath = ["/home/sdkn104/system/etc","/home/sadakane/system/etc",
+credPath = ["/home/sdkn104/system/etc","/home/sdkn104dev/system/etc","/home/sadakane/system/etc",
     "C:/Users/sdkn1/AppData/Local/Google/Cloud SDK/appengine/service/credentials", 
     "credentials", "."]
 for f in [p+"/BigQueryKey.json" for p in credPath]:
@@ -91,6 +91,6 @@ if __name__ == "__main__":
     #triggerBigQuery(table, [value1, value2, value3, value4])
     #import datetime
     #loadBigQuery("test_csv", [[datetime.datetime.now(),"b"],[55,3.4]])
-    r = queryBigQuery("select *  FROM `proven-mystery-220011.HOME_IoT.test_csv`")    
+    r = queryBigQuery("select *  FROM `fresh-catwalk-335010.HOME_IoT.test_csv`")    
     print(r)
     print("done")
