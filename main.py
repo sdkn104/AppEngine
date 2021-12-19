@@ -11,7 +11,7 @@ import private
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-nodeServiceHost = "node-app-dot-proven-mystery-220011.an.r.appspot.com"
+nodeServiceHost = "node-app-dot-fresh-catwalk-335010.an.r.appspot.com"
 gceHost = "35.203.132.149:80"
 
 def loginCheck():

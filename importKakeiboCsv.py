@@ -34,7 +34,7 @@ def getHistDic():
       WITH
       A as (
         SELECT himoku, utiwake, REGEXP_REPLACE(biko,'[0-9]','') as biko, mark, account
-        FROM `proven-mystery-220011.HOME_IoT.kakeibo_data_newest`
+        FROM `fresh-catwalk-335010.HOME_IoT.kakeibo_data_newest`
         where biko is not NULL AND account is not NULL AND account != '現金'
       ),
       B as (
