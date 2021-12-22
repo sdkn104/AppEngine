@@ -7,11 +7,13 @@ from flask import Flask, request, redirect, make_response
 import requests
 import private
 
+import myStock
+
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-nodeServiceHost = "node-app-dot-fresh-catwalk-335010.an.r.appspot.com"
+nodeServiceHost = "https://node-app-dot-fresh-catwalk-335010.an.r.appspot.com"
 gceHost = "35.203.132.149:80"
 
 def loginCheck():
@@ -55,6 +57,18 @@ def unyouHtml():
     values = importStockCsv.getDataHtml(data)
     myGSpread.appendRows(values,"運用履歴", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+
+# send stock (moved from server)
+@app.route("/sendStock")
+@app.route("/"+private.project_app+"/sendStock")
+def sendStock():
+    names_jp = ["1308", "1330", "9984", "1699", "6753", "7203","1639","1622"]
+    names_bloom = ["NKY:IND", "INDU:IND", "USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
+                   "VWO:US", "IYR:US", "IVV:US", "VNM:US",
+                   "2836:HK"]
+    names_bloom.extend([n+":JP" for n in names_jp])
+    myStock.sendToBQ(names_jp, names_bloom, "stock_rcv")
+    return 'done'
 
 
 @app.route("/insertBQ")
