@@ -13,7 +13,7 @@ import myStock
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-nodeServiceHost = "https://node-app-dot-fresh-catwalk-335010.an.r.appspot.com"
+nodeServiceHost = "node-app-dot-fresh-catwalk-335010.an.r.appspot.com"
 gceHost = "35.203.132.149:80"
 
 def loginCheck():
@@ -98,12 +98,12 @@ def gmail():
 # redirect to AppEngine node-app service
 @app.route('/node/<path:path>', methods=['POST','GET'])
 def catch_node(path):
-    url = "http://" + nodeServiceHost + (request.script_root + request.full_path).replace("/node","",1)
+    url = "https://" + nodeServiceHost + (request.script_root + request.full_path).replace("/node","",1)
     print("redirecting to "+url)
     return redirect(url)
 
 # transfer to GCE
-@app.route('/<path:path>', methods=['POST','GET'])
+@app.route('/xxxxxx/<path:path>', methods=['POST','GET'])
 def catch_all_private(path):    
     url = "http://" + gceHost + request.script_root + request.full_path
     print("transferring to "+url)
