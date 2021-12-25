@@ -4,10 +4,10 @@ import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-credPath = ["/home/sdkn104/system/etc","/home/sadakane/system/etc",
+credPath = ["/home/sdkn104dev/system/etc","/home/sadakane/system/etc",
     "C:/Users/sdkn1/AppData/Local/Google/Cloud SDK/appengine/service/credentials", 
     "credentials", "."]
-for f in [p+"/BigQueryKey.json" for p in credPath]:
+for f in [p+"/SpreadsheetToshiKey.json" for p in credPath]:
   if os.path.exists(f):
     cred = f
     print("set credential to " + cred)
@@ -38,10 +38,12 @@ def appendRows(values, spreadsheet, worksheet):
   """append rows to the last table in the worksheet.
      values is a list of lists.
   """
-  credentials = ServiceAccountCredentials.from_json_keyfile_name(cred, scope)
-  gc = gspread.authorize(credentials)
+  #credentials = ServiceAccountCredentials.from_json_keyfile_name(cred, scope)
+  #gc = gspread.authorize(credentials)
+  gc = gspread.service_account(cred, scope)
 
   ss = gc.open(spreadsheet)
+  #ss = gc.open_by_key("1n4ZQF2EaKFUFsq8ebhL3UZ9cR4t0-lIzCxVkZX4AB9Q")
   range_ = "'"+worksheet+"'!A:A"  # append rows after the last table overlap with A:A
   value_input_option = 'RAW'
   insert_data_option = 'INSERT_ROWS'
