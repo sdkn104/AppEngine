@@ -52,7 +52,7 @@ def imports():
             <input type="submit">
         </form>
         <h3>UNYOU CSV</h3>
-        <form action="/{project_app}/unyouCsv" method="POST">
+        <form action="/{project_app}/unyouCsv" method="POST" enctype="multipart/form-data">
             <input type="file" name="body">
             <input type="submit">
         </form>
