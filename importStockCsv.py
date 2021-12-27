@@ -28,9 +28,16 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   ptn_us  = r"約定日,受渡日,ティッカー,銘柄名,"
   ptn_adus = r"受渡日,約定日,口座区分,取引区分,対象証券名,決済通貨,単価,数量［株 /口］,受渡金額（受取）"
   ptn_adjp = r"受渡日,約定日,取引区分,口座区分,対象証券名,単価［円/％］,数量［株/口/額面］,受渡金額（受取）"
+
   # read csv file
-  with open(csvfile, "r", encoding="shift_jis") as f:
-    lines = f.readlines()
+  if os.path.exists(csvfile):
+    with open(csvfile, "rb") as f:
+        enc = chardet.detect(f.read())["encoding"]
+    with open(csvfile, "r", encoding=enc) as f:
+        lines = f.readlines()
+        #html_str = f.read()
+  else:
+    lines = str(csvfile).split("¥n")
   print("".join(lines).replace('"',''))
   print("read csv %d lines" % len(lines))
   # check csv type

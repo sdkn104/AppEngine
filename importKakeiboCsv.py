@@ -74,12 +74,21 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   ptn_pone = r"ご利用年月日,ご利用先,ご利用金額\(円\),割引額\(円\),ご請求金額\(円\),,お支払区分,入金,備考"
 
   # read csv file
-  with open(csvfile, "rb") as f:
-    enc = chardet.detect(f.read())["encoding"]
-  with open(csvfile, "r", encoding=enc) as f:
-    lines = f.readlines()
+  if os.path.exists(csvfile):
+    with open(csvfile, "rb") as f:
+        enc = chardet.detect(f.read())["encoding"]
+    with open(csvfile, "r", encoding=enc) as f:
+        lines = f.readlines()
+        #html_str = f.read()
+  else:
+    lines = str(csvfile).split("¥n")
+    #lines = csvfile.split("¥n")
+
+
   print("".join(lines).replace('"',''))
   print("read csv %d lines" % len(lines))
+  print(lines)
+
   # detect csv type
   if re.search(ptn_rakuten, "".join(lines).replace('"','')):
     print("RAKUTEN CARD")

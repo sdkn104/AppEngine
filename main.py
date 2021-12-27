@@ -34,9 +34,30 @@ def top():
         return h
     return '''
         <a href='/dl_top'>download</a><br>
+        <a href='/{project_app}/imports'>import kakeibo/unyou</a><br>
         <a href='{nodeServiceHost}'>top nodeJS</a><br>
-    '''.format(nodeServiceHost=nodeServiceHost)
+    '''.format(nodeServiceHost=nodeServiceHost, project_app=private.project_app)
 
+
+# imports
+@app.route("/"+private.project_app+"/imports", methods=['GET', 'POST'])
+def imports():
+    return '''
+        <!DOCTYPE html>
+        <html>
+        <h2>KAKEIBO/UNYOU DATA FILE UPLOAD</h2>
+        <h3>KAKEIBO CSV</h3>
+        <form action="/{project_app}/kakeiboCsv" method="POST" enctype="multipart/form-data">
+            <input type="file" name="body">
+            <input type="submit">
+        </form>
+        <h3>UNYOU CSV</h3>
+        <form action="/{project_app}/unyouCsv" method="POST">
+            <input type="file" name="body">
+            <input type="submit">
+        </form>
+        </html>
+    '''.format(nodeServiceHost=nodeServiceHost, project_app=private.project_app)
 
 # receive Kakeibo HTML 
 @app.route("/"+private.project_app+"/kakeiboHtml", methods=['POST'])
@@ -48,9 +69,31 @@ def kakeiboHtml():
     myGSpread.appendRows(values,"家計簿", "検索")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
     
+# receive Kakeibo CSV
+@app.route("/"+private.project_app+"/kakeiboCsv", methods=['POST'])
+def kakeiboCsv():
+    file = request.files['body']
+    csv = file.read()
+    print(csv)
+    import importKakeiboCsv
+    import myGSpread
+    values = importKakeiboCsv.getDataCsv(csv)
+    myGSpread.appendRows(values,"家計簿", "検索")
+    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+    
 # receive unyou HTML 
 @app.route("/"+private.project_app+"/unyouHtml", methods=['POST'])
 def unyouHtml():
+    data = request.form['body']
+    import importStockCsv
+    import myGSpread
+    values = importStockCsv.getDataHtml(data)
+    myGSpread.appendRows(values,"運用履歴", "data")
+    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+
+# receive unyou csv 
+@app.route("/"+private.project_app+"/unyouCsv", methods=['POST'])
+def unyouCsv():
     data = request.form['body']
     import importStockCsv
     import myGSpread
