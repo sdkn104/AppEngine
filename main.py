@@ -35,7 +35,7 @@ def top():
     return '''
         <a href='/dl_top'>download</a><br>
         <a href='/{project_app}/imports'>import kakeibo/unyou</a><br>
-        <a href='{nodeServiceHost}'>top nodeJS</a><br>
+        <a href='https://{nodeServiceHost}'>top nodeJS</a><br>
     '''.format(nodeServiceHost=nodeServiceHost, project_app=private.project_app)
 
 
