@@ -110,6 +110,8 @@ def sendToBQ(names_jp, names_bloom, table):
 
 
 if __name__ == "__main__":
+    #mat1 = getDataBloomberg(["MSFT:US"])
+    #print(mat1)
     names_jp = ["1322","1323"]
     names_bloom = ["2836:HK","USDJPY:CUR","AAPL:US", "1322:JP"]
     sendToBQ(names_jp, names_bloom, "stock_rcv")

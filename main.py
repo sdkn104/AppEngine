@@ -107,7 +107,7 @@ def unyouCsv():
 def sendStock():
     names_jp = ["1308", "1330", "9984", "1699", "6753", "7203","1639","1622"]
     names_bloom = ["NKY:IND", "INDU:IND", "USDJPY:CUR", "HKDJPY:CUR", "EURJPY:CUR", 
-                   "VWO:US", "IYR:US", "IVV:US", "VNM:US",
+                   "VWO:US", "IYR:US", "IVV:US", "VNM:US", "MSFT:US",
                    "2836:HK"]
     names_bloom.extend([n+":JP" for n in names_jp])
     myStock.sendToBQ(names_jp, names_bloom, "stock_rcv")
