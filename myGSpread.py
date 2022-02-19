@@ -24,7 +24,11 @@ def insertRows(values, spreadsheet, worksheet, start_row=0):
   credentials = ServiceAccountCredentials.from_json_keyfile_name(cred, scope)
   gc = gspread.authorize(credentials)
 
-  wks = gc.open(spreadsheet).worksheet(worksheet)
+  if spreadsheet.startswith("http"):
+      ss = gc.open_by_url(spreadsheet)
+  else:
+      ss = gc.open(spreadsheet)
+  wks = ss.worksheet(worksheet)
   if start_row <= 0:
     start_row = len(wks.get_all_values()) + 1 - start_row
   if start_row + len(values) - 1 > wks.row_count: 
@@ -42,7 +46,10 @@ def appendRows(values, spreadsheet, worksheet):
   #gc = gspread.authorize(credentials)
   gc = gspread.service_account(cred, scope)
 
-  ss = gc.open(spreadsheet)
+  if spreadsheet.startswith("http"):
+      ss = gc.open_by_url(spreadsheet)
+  else:
+      ss = gc.open(spreadsheet)
   #ss = gc.open_by_key("1n4ZQF2EaKFUFsq8ebhL3UZ9cR4t0-lIzCxVkZX4AB9Q")
   range_ = "'"+worksheet+"'!A:A"  # append rows after the last table overlap with A:A
   value_input_option = 'RAW'

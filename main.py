@@ -49,12 +49,12 @@ def imports():
         <h2>KAKEIBO/UNYOU DATA FILE UPLOAD</h2>
         <h3>KAKEIBO CSV</h3>
         <form action="/{project_app}/kakeiboCsv" method="POST" enctype="multipart/form-data">
-            <input type="file" name="body">
+            <input type="file" name="csvFile">
             <input type="submit">
         </form>
         <h3>UNYOU CSV</h3>
         <form action="/{project_app}/unyouCsv" method="POST" enctype="multipart/form-data">
-            <input type="file" name="body">
+            <input type="file" name="csvFile">
             <input type="submit">
         </form>
         </html>
@@ -73,9 +73,13 @@ def kakeiboHtml():
 # receive Kakeibo CSV
 @app.route("/"+private.project_app+"/kakeiboCsv", methods=['POST'])
 def kakeiboCsv():
-    file = request.files['body']
-    csv = file.read()
-    print(csv)
+    file = request.files["csvFile"]
+    print(file.filename)
+    print(file.content_type)
+    import importStockCsv
+    import myGSpread
+    data = file.stream.read();
+    csv = data.decode("shift_jis")
     import importKakeiboCsv
     import myGSpread
     values = importKakeiboCsv.getDataCsv(csv)
@@ -89,17 +93,22 @@ def unyouHtml():
     import importStockCsv
     import myGSpread
     values = importStockCsv.getDataHtml(data)
-    myGSpread.appendRows(values,"運用履歴", "data")
+    myGSpread.appendRows(values,"https://docs.google.com/spreadsheets/d/1disDju6lKA_cXC_Tvknss1zbHHTrnO9wSvcVGua2esw", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
 
 # receive unyou csv 
 @app.route("/"+private.project_app+"/unyouCsv", methods=['POST'])
 def unyouCsv():
-    data = request.form['body']
+    file = request.files["csvFile"]
+    print(file.filename)
+    print(file.content_type)
     import importStockCsv
     import myGSpread
-    values = importStockCsv.getDataHtml(data)
-    myGSpread.appendRows(values,"運用履歴", "data")
+    data = file.stream.read();
+    data2 = data.decode("shift_jis")
+    #print(data2)
+    values = importStockCsv.getDataCsv(data2)
+    myGSpread.appendRows(values,"https://docs.google.com/spreadsheets/d/1disDju6lKA_cXC_Tvknss1zbHHTrnO9wSvcVGua2esw", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
 
 # send stock (moved from server)
