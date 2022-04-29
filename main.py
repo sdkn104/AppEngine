@@ -84,8 +84,13 @@ def kakeiboCsv():
     import myGSpread
     values = importKakeiboCsv.getDataCsv(csv)
     myGSpread.appendRows(values,"家計簿", "検索")
+    import myFirebase
+    import datetime
+    d = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dics = [{"CREATE_TIME":d, "date":v[2], "himoku":v[3], "utiwake":v[4], "biko":v[5], "mark":v[6], "income":v[7], "outgo":v[8], "account":v[10]} for v in values]
+    #myFirebase.addFirestore("sampleKey", dics)
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
-    
+
 # receive unyou HTML 
 @app.route("/"+private.project_app+"/unyouHtml", methods=['POST'])
 def unyouHtml():
@@ -93,6 +98,7 @@ def unyouHtml():
     import importStockCsv
     import myGSpread
     values = importStockCsv.getDataHtml(data)
+    print(values)
     myGSpread.appendRows(values,"https://docs.google.com/spreadsheets/d/1disDju6lKA_cXC_Tvknss1zbHHTrnO9wSvcVGua2esw", "data")
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
 
@@ -104,7 +110,7 @@ def unyouCsv():
     print(file.content_type)
     import importStockCsv
     import myGSpread
-    data = file.stream.read();
+    data = file.stream.read()
     data2 = data.decode("shift_jis")
     #print(data2)
     values = importStockCsv.getDataCsv(data2)

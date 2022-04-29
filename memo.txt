@@ -18,6 +18,12 @@ sudo python3 main_server.py >& /dev/null &  # -> log file = flask.log
 sudo set_cron_server.sh
 service cron restart
 
+# dev / setup / install
+pip3 install <packageName>
+pip3 freeze > requirements.txt
+pip3 install -r requirements.txt
+
+
 # upload/download file
 1. open SSH from browser
 2. Setting(haguruma) -> upload/download

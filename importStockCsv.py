@@ -195,7 +195,8 @@ def getDataHtml(html):
   tbl = None
   type = ""
   # gaitame
-  for t in soup.find_all("table"):
+  for t in soup.select("#uforex1_tmpl_tradelist_MyTable table"):
+    print(t)
     c = t.find_all("div",attrs={"class":["uforex1_class_bid_img","uforex1_class_ask_img"]})
     if len(c) > 0:
         tbl = t
@@ -206,7 +207,8 @@ def getDataHtml(html):
     type = "click365"
 
   rows = tbl.find_all("tr")
-
+  print(type)
+  
   mat = []
   if type == "gaitame":
     for row in rows:
@@ -229,8 +231,8 @@ def getDataHtml(html):
         sinki_price = tofloat(csvRow[7])
         kessai_price = tofloat(csvRow[8])
         price = kessai_price if kubun == "決済約定" else sinki_price if kubun == "新規約定" else 0
-        tesuryo = tofloat(csvRow[9])
-        swap = tofloat(csvRow[10])
+        tesuryo = tofloat(csvRow[10])
+        swap = tofloat(csvRow[11])
         paid = price * amount + tesuryo + swap
         account = "外為NEXT"
         comment = "SWAP:"+str(swap)
