@@ -19,8 +19,12 @@ def tofloat(s):
     return 0
   return float(str(s).replace(",",""))
 
-def datefmt(s):
-  a = s.replace("/","-").strip().split("-")
+def datefmt(t):
+  s = str(t)
+  if len(s) == 8:
+    a = (s[0:4], s[4:6], s[6:8]) 
+  else:
+    a = s.replace("/","-").strip().split("-")
   if len(a) == 3:
     return "%s/%02d/%02d" % (a[0], int(a[1]), int(a[2]))
   elif len(a) == 2 :
@@ -68,6 +72,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
                  "ゆうちょ銀行":"郵便貯金普通"}
 
   ptn_rakuten = r"利用日,利用店名・商品名,利用者,支払方法,利用金額,支払手数料,支払総額"
+  ptn_rakutenbank = r"取引日,入出金\(円\),取引後残高\(円\),入出金内容"
   ptn_bankmeisai = r"取引日,名義,会社名,出金,入金,残高,摘要,備考,取引先支店名"
   ptn_bank = r"会社名,支店,口座種別,口座番号,残高"
   ptn_jwest = r"ご利用者,カテゴリ,ご利用日,ご利用先など,ご利用金額\(￥\),支払区分,今回回数,訂正サイン,お支払い金額\(￥\),国内／海外"
@@ -93,6 +98,9 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   if re.search(ptn_rakuten, "".join(lines).replace('"','')):
     print("RAKUTEN CARD")
     ptn = ptn_rakuten
+  elif re.search(ptn_rakutenbank, "".join(lines).replace('"','')):
+    print("RAKUTEN BANK")
+    ptn = ptn_rakutenbank
   elif re.search(ptn_bankmeisai, "".join(lines).replace('"','')):
     print("BANK MEISAI (moneyLook)")
     ptn = ptn_bankmeisai
@@ -135,6 +143,19 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       outgo = row["支払総額"]
       mark = dic[biko]["mark"] if biko in dic else ""
       account = "楽天カード"
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif ptn == ptn_rakutenbank:
+    #ptn_rakutenbank = r"取引日,入出金(円),取引後残高(円),入出金内容"
+    for index, row in df.iterrows():
+      date = datefmt(row["取引日"])
+      biko = str(row["入出金内容"])
+      b = re.sub(r"[0-9]","",biko)
+      himoku = dic[b]["himoku"] if biko in dic else ""
+      utiwake = dic[b]["utiwake"] if biko in dic else ""
+      income = 0
+      outgo = -(0+row["入出金(円)"])
+      mark = dic[b]["mark"] if biko in dic else ""
+      account = "楽天銀行"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():

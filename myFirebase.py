@@ -11,8 +11,10 @@ from firebase_admin import firestore
 # Use the application default credentials
 # (this setting is only for GCP environment, not for local PC environemnt, etc.)
 cred = credentials.ApplicationDefault()
+#firebase_admin.initialize_app()
 firebase_admin.initialize_app(cred, {
-  'projectId': "fir-sample-c25f9",
+#  'projectId': "fir-sample-c25f9",
+  'projectId': "fresh-catwalk-335010",
 })
 
 # query to BigQuery and return DataFrame

@@ -76,20 +76,20 @@ def kakeiboCsv():
     file = request.files["csvFile"]
     print(file.filename)
     print(file.content_type)
-    import importStockCsv
-    import myGSpread
     data = file.stream.read();
     csv = data.decode("shift_jis")
     import importKakeiboCsv
-    import myGSpread
+    print("starting importKakeiboCsv.getDataCsv")
     values = importKakeiboCsv.getDataCsv(csv)
-    myGSpread.appendRows(values,"家計簿", "検索")
+    #values = [["","","2022/04/29", "himoku", "utiwake", "biko", "mark", 88, 99, "", "account"]]
+    #import myGSpread
+    #myGSpread.appendRows(values,"家計簿", "検索")
     import myFirebase
     import datetime
     d = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     dics = [{"CREATE_TIME":d, "date":v[2], "himoku":v[3], "utiwake":v[4], "biko":v[5], "mark":v[6], "income":v[7], "outgo":v[8], "account":v[10]} for v in values]
-    #myFirebase.addFirestore("sampleKey", dics)
-    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+    myFirebase.addFirestore("kakeibo", dics)
+    return make_response(str(dics),[("Content-Type","text/plain; charset=utf-8")])
 
 # receive unyou HTML 
 @app.route("/"+private.project_app+"/unyouHtml", methods=['POST'])
@@ -115,7 +115,12 @@ def unyouCsv():
     #print(data2)
     values = importStockCsv.getDataCsv(data2)
     myGSpread.appendRows(values,"https://docs.google.com/spreadsheets/d/1disDju6lKA_cXC_Tvknss1zbHHTrnO9wSvcVGua2esw", "data")
-    return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
+    import myFirebase
+    import datetime
+    d = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dics = [{"CREATE_TIME":d, "date":v[2], "himoku":v[3], "utiwake":v[4], "biko":v[5], "mark":v[6], "income":v[7], "outgo":v[8], "account":v[10]} for v in values]
+    myFirebase.addFirestore("sampleKey", dics)
+    return make_response(str(dics),[("Content-Type","text/plain; charset=utf-8")])
 
 # send stock (moved from server)
 @app.route("/sendStock")
