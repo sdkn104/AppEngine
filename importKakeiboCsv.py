@@ -155,7 +155,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       income = 0
       outgo = -(0+row["入出金(円)"])
       mark = dic[b]["mark"] if biko in dic else ""
-      account = "楽天銀行"
+      account = "イーバンク"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():
