@@ -21,7 +21,7 @@ def tofloat(s):
 
 def datefmt(t):
   s = str(t)
-  if len(s) == 8:
+  if len(s) == 8 and re.match(r"^[0-9]*$", s):
     a = (s[0:4], s[4:6], s[6:8]) 
   else:
     a = s.replace("/","-").strip().split("-")
@@ -77,6 +77,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   ptn_bank = r"会社名,支店,口座種別,口座番号,残高"
   ptn_jwest = r"ご利用者,カテゴリ,ご利用日,ご利用先など,ご利用金額\(￥\),支払区分,今回回数,訂正サイン,お支払い金額\(￥\),国内／海外"
   ptn_pone = r"ご利用年月日,ご利用先,ご利用金額\(円\),割引額\(円\),ご請求金額\(円\),,お支払区分,入金,備考"
+  ptn_mufg = '日付,摘要,摘要内容,支払い金額,預かり金額,差引残高,メモ,未資金化区分,入払区分'
 
   # read csv file
   if os.path.exists(csvfile):
@@ -92,7 +93,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
 
   print("".join(lines).replace('"',''))
   print("read csv %d lines" % len(lines))
-  print(lines)
+  #print(lines)
 
   # detect csv type
   if re.search(ptn_rakuten, "".join(lines).replace('"','')):
@@ -113,6 +114,9 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   elif re.search(ptn_pone, "".join(lines).replace('"','')):
     print("PONE CARD")
     ptn = ptn_pone
+  elif re.search(ptn_mufg, "".join(lines).replace('"','')):
+    print("MUFG")
+    ptn = ptn_mufg
   else:
     print("error: csv header no match")
     exit(1)
@@ -156,6 +160,19 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       outgo = -(0+row["入出金(円)"])
       mark = dic[b]["mark"] if biko in dic else ""
       account = "イーバンク"
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif ptn == ptn_mufg:
+    #ptn_rakutenbank = r"取引日,入出金(円),取引後残高(円),入出金内容"
+    for index, row in df.iterrows():
+      date = datefmt(row["日付"])
+      biko = str(row["摘要"]) + " " + str(row["摘要内容"]) + " " + str(row["メモ"])
+      b = re.sub(r"[0-9]","",biko)
+      himoku = dic[b]["himoku"] if biko in dic else ""
+      utiwake = dic[b]["utiwake"] if biko in dic else ""
+      income = 0
+      outgo = tofloat(row["支払い金額"]) - tofloat(row["預かり金額"])
+      mark = dic[b]["mark"] if biko in dic else ""
+      account = "MUFG銀行"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():
@@ -241,6 +258,26 @@ def getDataHtml(html):
     div = soup.findAll("div",{"class":"mic-block-scroll-table__inner"})[0]
     table = div.findAll("table")[0]
     rows = table.findAll("tr")
+    mat = []
+    for row in rows:
+        csvRow = []
+        for cell in row.findAll(['td', 'th']):
+            csvRow.append(cell.get_text())
+        print(csvRow)
+        if len(csvRow) == 6:
+          date = datefmt(csvRow[0])
+          biko = csvRow[1]
+          b = re.sub(r"[0-9]","",biko)
+          himoku = dic[b]["himoku"] if biko in dic else ""
+          utiwake = dic[b]["utiwake"] if biko in dic else ""
+          mark = dic[b]["mark"] if biko in dic else ""
+          income = 0
+          outgo = tofloat(csvRow[5].replace("円","").replace(",","").strip())
+          account = "MICARD"
+          mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif re.search(r"楽天", title):
+    div = soup.findAll("div",{"class":"stmt-current-payment-list-body"})[0]
+    rows = div.findAll("div",{"class":"stmt-payment-lists__i"})
     mat = []
     for row in rows:
         csvRow = []
