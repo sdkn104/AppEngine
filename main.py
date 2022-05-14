@@ -65,9 +65,14 @@ def imports():
 def kakeiboHtml():
     data = request.form['body']
     import importKakeiboCsv
-    import myGSpread
+    #import myGSpread
     values = importKakeiboCsv.getDataHtml(data)
-    myGSpread.appendRows(values, "家計簿", "検索")
+    #myGSpread.appendRows(values, "家計簿", "検索")
+    import myFirebase
+    import datetime
+    d = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dics = [{"CREATE_TIME":d, "date":v[2], "himoku":v[3], "utiwake":v[4], "biko":v[5], "mark":v[6], "income":v[7], "outgo":v[8], "account":v[10]} for v in values]
+    myFirebase.addFirestore("kakeibo", dics)
     return make_response(str(values),[("Content-Type","text/plain; charset=utf-8")])
     
 # receive Kakeibo CSV

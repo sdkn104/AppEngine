@@ -14,6 +14,12 @@ import myBigQuery
 #  return 1
 #test()
 
+
+def trimStr(s):
+  ss = re.sub(r"^[ \t\r\n]*", "", s)
+  ss = re.sub(r"[ \t\r\n]*$", "", ss)
+  return ss
+
 def tofloat(s):
   if str(s) == "nan":
     return 0
@@ -255,6 +261,7 @@ def getDataHtml(html):
   
   title = soup.findAll("title")[0].get_text();
   if re.search(r"エムアイカード", title):
+    print("MI CARD")
     div = soup.findAll("div",{"class":"mic-block-scroll-table__inner"})[0]
     table = div.findAll("table")[0]
     rows = table.findAll("tr")
@@ -276,26 +283,29 @@ def getDataHtml(html):
           account = "MICARD"
           mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif re.search(r"楽天", title):
+    print("楽天カード")
     div = soup.findAll("div",{"class":"stmt-current-payment-list-body"})[0]
     rows = div.findAll("div",{"class":"stmt-payment-lists__i"})
     mat = []
     for row in rows:
         csvRow = []
-        for cell in row.findAll(['td', 'th']):
+        for cell in row.findAll("div",{"class":"stmt-payment-lists__data"}):
             csvRow.append(cell.get_text())
         print(csvRow)
         if len(csvRow) == 6:
-          date = datefmt(csvRow[0])
-          biko = csvRow[1]
+          date = datefmt(trimStr(csvRow[0]))
+          biko = trimStr(csvRow[1])
           b = re.sub(r"[0-9]","",biko)
           himoku = dic[b]["himoku"] if biko in dic else ""
           utiwake = dic[b]["utiwake"] if biko in dic else ""
           mark = dic[b]["mark"] if biko in dic else ""
           income = 0
-          outgo = tofloat(csvRow[5].replace("円","").replace(",","").strip())
-          account = "MICARD"
+          outgo = tofloat(trimStr(csvRow[4]).replace("¥","").replace(",","").strip())
+          account = "楽天カード"
           mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+          
   else:
+    print("Money Look")
     # MoneyLook
     acc = soup.findAll("li", {"id":"view_td_span_companynm"})[0].get_text()
     if "三井住友" in acc:
@@ -335,6 +345,7 @@ def getDataHtml(html):
 
 
   print("read %d rows" % len(rows))
+  print(mat)  
   return mat
 
 if __name__ == "__main__":
