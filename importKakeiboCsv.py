@@ -60,14 +60,8 @@ def getHistDic():
   #df = myBigQuery.queryBigQuery(sql)
   
   # get data from FireStore
-  import firebase_admin
-  from firebase_admin import firestore
-  credfile = "credentials/fresh-catwalk-335010-firebase-adminsdk-a0zfn-df9a5a2aca.json"
-  cred = firebase_admin.credentials.Certificate(credfile)
-  firebase_admin.initialize_app(cred)
-  db = firebase_admin.firestore.client()
-  users_ref = db.collection(u'kakeibo')
-  docs = users_ref.stream()
+  import myFirebase
+  docs = myFirebase.queryFirestore(u'kakeibo', 40000)
   # set dic
   dic = {}
   for doc in docs:
@@ -75,6 +69,7 @@ def getHistDic():
     dic[dd["biko"]] = {"himoku":dd["himoku"], 
                         "utiwake":dd["utiwake"], 
                         "mark":dd["mark"] if dd["mark"] else ""}
+  print(dic)
   return dic
 
 # read CSV and retern list of lists

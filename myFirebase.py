@@ -13,17 +13,17 @@ from firebase_admin import firestore
 cred = credentials.ApplicationDefault()
 #firebase_admin.initialize_app()
 firebase_admin.initialize_app(cred, {
-#  'projectId': "fir-sample-c25f9",
-  'projectId': "fresh-catwalk-335010",
+        'projectId': "fresh-catwalk-335010",
 })
+
 
 # query to BigQuery and return DataFrame
 def queryFirestore(collectionName, limit):
     db = firestore.client()
     coll_ref = db.collection(collectionName)
-    docs = coll_ref.get()
-    for doc in docs:
-        print(f'{doc.id} => {doc.to_dict()}')
+    docs = coll_ref.stream()
+    #for doc in docs:
+        #print(f'{doc.id} => {doc.to_dict()}')
     return docs
 
 
