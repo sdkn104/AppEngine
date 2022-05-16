@@ -57,12 +57,24 @@ def getHistDic():
       )
       select himoku, utiwake, biko, mark from B where num = 1
     """
-  df = myBigQuery.queryBigQuery(sql)
+  #df = myBigQuery.queryBigQuery(sql)
+  
+  # get data from FireStore
+  import firebase_admin
+  from firebase_admin import firestore
+  credfile = "credentials/fresh-catwalk-335010-firebase-adminsdk-a0zfn-df9a5a2aca.json"
+  cred = firebase_admin.credentials.Certificate(credfile)
+  firebase_admin.initialize_app(cred)
+  db = firebase_admin.firestore.client()
+  users_ref = db.collection(u'kakeibo')
+  docs = users_ref.stream()
+  # set dic
   dic = {}
-  for i, row in df.iterrows():
-    dic[row["biko"]] = {"himoku":row["himoku"], 
-                        "utiwake":row["utiwake"], 
-                        "mark":row["mark"] if row["mark"] else ""}
+  for doc in docs:
+    dd = doc.to_dict()
+    dic[dd["biko"]] = {"himoku":dd["himoku"], 
+                        "utiwake":dd["utiwake"], 
+                        "mark":dd["mark"] if dd["mark"] else ""}
   return dic
 
 # read CSV and retern list of lists
