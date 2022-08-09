@@ -48,6 +48,7 @@ def imports():
         <html>
         <h2>KAKEIBO/UNYOU DATA FILE UPLOAD</h2>
         <h3>KAKEIBO CSV</h3>
+        <div>rakuten card, rakuten bank, jwest, pone, mufg, juroku</div>
         <form action="/{project_app}/kakeiboCsv" method="POST" enctype="multipart/form-data">
             <input type="file" name="csvFile">
             <input type="submit">

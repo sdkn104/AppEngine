@@ -23,6 +23,8 @@ def trimStr(s):
 def tofloat(s):
   if str(s) == "nan":
     return 0
+  if str(s) == "":
+    return 0
   return float(str(s).replace(",",""))
 
 def datefmt(t):
@@ -91,6 +93,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   ptn_jwest = r"ご利用者,カテゴリ,ご利用日,ご利用先など,ご利用金額\(￥\),支払区分,今回回数,訂正サイン,お支払い金額\(￥\),国内／海外"
   ptn_pone = r"ご利用年月日,ご利用先,ご利用金額\(円\),割引額\(円\),ご請求金額\(円\),,お支払区分,入金,備考"
   ptn_mufg = '日付,摘要,摘要内容,支払い金額,預かり金額,差引残高,メモ,未資金化区分,入払区分'
+  ptn_juroku = '日付,摘要,摘要内容,支払い金額,預かり金額,差引残高,メモ'
 
   # read csv file
   if os.path.exists(csvfile):
@@ -130,6 +133,9 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
   elif re.search(ptn_mufg, "".join(lines).replace('"','')):
     print("MUFG")
     ptn = ptn_mufg
+  elif re.search(ptn_juroku, "".join(lines).replace('"','')):
+    print("JUROKU bank")
+    ptn = ptn_juroku
   else:
     print("error: csv header no match")
     exit(1)
@@ -186,6 +192,18 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
       outgo = tofloat(row["支払い金額"]) - tofloat(row["預かり金額"])
       mark = dic[b]["mark"] if biko in dic else ""
       account = "MUFG銀行"
+      mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
+  elif ptn == ptn_juroku:
+    for index, row in df.iterrows():
+      date = datefmt(row["日付"])
+      biko = str(row["摘要"]) + " " + str(row["摘要内容"]) + " " + str(row["メモ"])
+      b = re.sub(r"[0-9]","",biko)
+      himoku = dic[b]["himoku"] if biko in dic else ""
+      utiwake = dic[b]["utiwake"] if biko in dic else ""
+      income = 0
+      outgo = tofloat(row["支払い金額"]) - tofloat(row["預かり金額"])
+      mark = dic[b]["mark"] if biko in dic else ""
+      account = "十六銀行"
       mat.append(["","",date, himoku, utiwake, biko, mark, income, outgo, "", account])
   elif ptn == ptn_bankmeisai:
     for index, row in df.iterrows():
