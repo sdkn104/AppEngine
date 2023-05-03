@@ -37,7 +37,7 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
         lines = f.readlines()
         #html_str = f.read()
   else:
-    lines = str(csvfile).split("¥n")
+    lines = str(csvfile).split("\n")
   print("".join(lines).replace('"',''))
   print("read csv %d lines" % len(lines))
   # check csv type

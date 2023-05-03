@@ -103,13 +103,17 @@ def getDataCsv(csvfile, start=datetime.datetime(1900,1,1), end=datetime.datetime
         lines = f.readlines()
         #html_str = f.read()
   else:
-    lines = str(csvfile).split("¥n")
+    ls = str(csvfile).split("\r")
+    print(len(ls))
+    lines = str(csvfile).replace("\r\n","\n").replace("\n","\r\n").split("\n")
+    print("reading as text..")
+    #lines = str(csvfile).split("¥n")
     #lines = csvfile.split("¥n")
 
 
   print("".join(lines).replace('"',''))
   print("read csv %d lines" % len(lines))
-  #print(lines)
+  print(lines)
 
   # detect csv type
   if re.search(ptn_rakuten, "".join(lines).replace('"','')):
